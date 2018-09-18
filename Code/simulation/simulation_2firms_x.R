@@ -19,26 +19,26 @@ alpha <- 3/4
 beta <- 1/2
 
 data <- data.frame(mktid = seq(from = 1, to = M, by = 1),
-                   x1 = x[, 1],
-                   x2 = x[, 2],
-                   cost1 = cost[, 1],
-                   cost2 = cost[, 2]) #adding multiple columns simultaneously
+x1 = x[, 1],
+x2 = x[, 2],
+cost1 = cost[, 1],
+cost2 = cost[, 2]) #adding multiple columns simultaneously
 
 #solve for eq
 eq <- matrix(0, M, 2^N)
 k <- 1
 
-for(j in 0 : (N - 1)){
-        for(i in 0 : (N - 1)){
-                eq[ , k] <- (-1)^i * (alpha * x[, 1] - beta * j - cost[, 1]) < 0 & 
-                        (-1)^j * (alpha * x[, 2] - beta * i - cost[, 2]) < 0
-                k <- k + 1
-        }
+for(i in 0 : (N - 1)){
+    for(j in 0 : (N - 1)){
+        eq[ , k] <- (-1)^i * (alpha * x[, 1] - beta * (1 - j) - cost[, 1]) > 0 &
+        (-1)^j * (alpha * x[, 2] - beta * (1 - i) - cost[, 2]) > 0
+        k <- k + 1
+    }
 }
 
 data$eq <- sapply(apply(eq == 1, 1, which), function(x){x[sample(length(x), size = 1)]})
 
-#different numbers indicate different eqs: 1 --> (0, 0), 2 --> (1, 0), 3 --> (0, 1), 4 --> (1, 1)
+#different numbers indicate different eqs: 1 --> (1, 1), 2 --> (1, 0), 3 --> (0, 1), 4 --> (0, 0)
 
 y <- matrix(0, nrow = M, ncol = N)
 data$y1 <- data$eq == 2 | data$eq == 4
@@ -52,138 +52,163 @@ P00 <- sum(data$eq == 4)/M
 data$x1.itv <- floor(data$x1/0.5)
 data$x2.itv <- floor(data$x2/0.5)
 
-cond.prob.df <- aggregate(eq ~ x1.itv + x2.itv, data = data, 
-                          FUN = function(x){
-                                  rowSums(matrix(rep(x, each = 4), nrow = 4) == c(1, 2, 3, 4))/length(x)})
+cond.prob.df <- aggregate(eq ~ x1.itv + x2.itv, data = data,
+FUN = function(x){
+    rowSums(matrix(rep(x, each = 4), nrow = 4) == c(1, 2, 3, 4))/length(x)})
 
 colnames(cond.prob.df)[colnames(cond.prob.df) == "eq"] <- "cond.prob"
 
-cond.prob.df <- merge(data, cond.prob.df, by.x = c("x1.itv", "x2.itv"))
+data <- merge(data, cond.prob.df, by.x = c("x1.itv", "x2.itv"))
 
-cond.prob.df <- cond.prob.df[order(cond.prob.df$mktid), ]
+data$cond.prob <- data$cond.prob[cbind(1 : nrow(data), data$eq)]
+
+data <- data[order(data$mktid), ]
 
 
-data$cond.prob <- cond.prob.df$cond.prob[cbind(1 : nrow(data), data$eq)]
+#obj <- function(params){
+
+alpha <- params[1]
+beta <- params[2]
+
+Q <- 0
+
+sub.data1 <- data[data$eq == 1, ]
+Q <- Q + sum(pmax(alpha * sub.data1$x1 * sub.data1$cond.prob -
+(1 - alpha * sub.data1$x2) * (1 - (alpha * sub.data1$x1)^2)/2,
+0)^2)
+Q <- Q + sum(pmax(alpha * sub.data1$x2 * sub.data1$cond.prob -
+(1 - alpha * sub.data1$x1) * (1 - (alpha * sub.data1$x2)^2)/2,
+0)^2)
+
+sub.data2 <- data[data$eq == 2, ]
+
+Q <- Q + sum(pmin(alpha * sub.data2$x1 * sub.data2$cond.prob -
+(1 - (alpha * sub.data2$x2 - beta)) * (alpha * sub.data2$x1 - beta)^2/2 -
+(1 - alpha * sub.data2$x2) * ((alpha * sub.data2$x1)^2 -
+(alpha * sub.data2$x1 - beta)^2)/2,
+0)^2)
 
 
-obj <- function(params){
-        
-                alpha <- params[1]
-                beta <- params[2]
-        
-                Q <- 0
-                
-                sub.data1 <- data[data$eq == 1, ]
-                Q <- Q + sum(pmax(alpha * sub.data1$x1 * sub.data1$cond.prob - 
-                                          (1 - alpha * sub.data1$x2) * (1 - (alpha * sub.data1$x1))/2, 
-                                  0)^2)
-                Q <- Q + sum(pmax(alpha * sub.data1$x2 * sub.data1$cond.prob - 
-                                          (1 - alpha * sub.data1$x1) * (1 - (alpha * sub.data1$x2))/2, 
-                                  0)^2)
-                
-                sub.data2 <- data[data$eq == 2, ]
-                
-                Q <- Q + sum(pmin(alpha * sub.data2$x1 * sub.data2$cond.prob - 
-                                          (1 - (alpha * sub.data2$x2 - beta)) * (alpha * sub.data2$x1 - beta)^2/2 - 
-                                          (1 - alpha * sub.data2$x2) * ((alpha * sub.data2$x1)^2 - 
-                                                                                (alpha * sub.data2$x1 - beta)^2)/2, 
-                                  0)^2)
-                
-                
-                Q <- Q + sum(pmax((alpha * sub.data2$x2 - beta) * sub.data2$cond.prob -
-                                          alpha * sub.data2$x1 * (1 - (alpha * sub.data2$x2)^2)/2 -
-                                          (alpha * sub.data2$x1 - beta) * ((alpha * sub.data2$x2)^2 - 
-                                                                                (alpha * sub.data2$x2 - beta)^2)/2,
-                                   0)^2)
-               
-                sub.data3 <- data[data$eq == 3, ]
-                Q <- Q + sum(pmax((alpha * sub.data3$x1 - beta) * sub.data3$cond.prob -
-                                          alpha * sub.data3$x2 * (1 - (alpha * sub.data3$x1)^2)/2 -
-                                          (alpha * sub.data3$x2 - beta) * ((alpha * sub.data3$x1)^2 - 
-                                                                                (alpha * sub.data3$x1 - beta)^2)/2,
-                                  0)^2)
-                
-                Q <- Q + sum(pmin(alpha * sub.data3$x2 * sub.data3$cond.prob - 
-                                          (1 - (alpha * sub.data3$x1 - beta)) * (alpha * sub.data3$x2 - beta)^2/2 - 
-                                          (1 - alpha * sub.data3$x1) * ((alpha * sub.data3$x2)^2 - 
-                                                                                (alpha * sub.data3$x2 - beta)^2)/2, 
-                                  0)^2)
-                
-                
-                sub.data4 <- data[data$eq == 4, ]
-                Q <- Q + sum(pmin((alpha * sub.data4$x1 - beta) * sub.data4$cond.prob - 
-                                      (alpha * sub.data4$x2 - beta) * (alpha * sub.data4$x1 - beta)^2/2, 
-                                  0)^2)
-                Q <- Q + sum(pmin((alpha * sub.data4$x2 - beta) * sub.data4$cond.prob - 
-                                          (alpha * sub.data4$x1 - beta) * (alpha * sub.data4$x2 - beta)^2/2, 
-                                  0)^2)
-                return(Q/M)
-}
+Q <- Q + sum(pmax((alpha * sub.data2$x2 - beta) * sub.data2$cond.prob -
+alpha * sub.data2$x1 * (1 - (alpha * sub.data2$x2)^2)/2 -
+(alpha * sub.data2$x1 - beta) * ((alpha * sub.data2$x2)^2 -
+(alpha * sub.data2$x2 - beta)^2)/2,
+0)^2)
+
+sub.data3 <- data[data$eq == 3, ]
+Q <- Q + sum(pmax((alpha * sub.data3$x1 - beta) * sub.data3$cond.prob -
+alpha * sub.data3$x2 * (1 - (alpha * sub.data3$x1)^2)/2 -
+(alpha * sub.data3$x2 - beta) * ((alpha * sub.data3$x1)^2 -
+(alpha * sub.data3$x1 - beta)^2)/2,
+0)^2)
+
+Q <- Q + sum(pmin(alpha * sub.data3$x2 * sub.data3$cond.prob -
+(1 - (alpha * sub.data3$x1 - beta)) * (alpha * sub.data3$x2 - beta)^2/2 -
+(1 - alpha * sub.data3$x1) * ((alpha * sub.data3$x2)^2 -
+(alpha * sub.data3$x2 - beta)^2)/2,
+0)^2)
+
+
+sub.data4 <- data[data$eq == 4, ]
+Q <- Q + sum(pmin((alpha * sub.data4$x1 - beta) * sub.data4$cond.prob -
+(alpha * sub.data4$x2 - beta) * (alpha * sub.data4$x1 - beta)^2/2,
+0)^2)
+Q <- Q + sum(pmin((alpha * sub.data4$x2 - beta) * sub.data4$cond.prob -
+(alpha * sub.data4$x1 - beta) * (alpha * sub.data4$x2 - beta)^2/2,
+0)^2)
+return(Q/M)
+#}
 
 obj.eq <- function(params){
-        alpha <- params[1]
-        beta <- params[2]
-        
-        Q <- 0
-        
-        sub.data1 <- data[data$eq == 1, ]
-        Q <- Q + 
-                sum(((1 - punif(alpha * sub.data1$x1)) * ((1 - punif(alpha * sub.data1$x2))) - 
-                             sub.data1$cond.prob)^2)
-        
-        sub.data4 <- data[data$eq == 4, ]
-        Q <- Q + sum((punif(alpha * sub.data4$x1 - beta) * punif(alpha * sub.data4$x2 - beta) - 
-                              sub.data4$cond.prob)^2)
-        
+    alpha <- params[1]
+    beta <- params[2]
+    
+    Q <- 0
+    
+    sub.data1 <- data[data$eq == 1, ]
+    Q <- Q +
+    sum(((1 - punif(alpha * sub.data1$x1)) * ((1 - punif(alpha * sub.data1$x2))) -
+    sub.data1$cond.prob)^2)
+    
+    sub.data4 <- data[data$eq == 4, ]
+    Q <- Q + sum((punif(alpha * sub.data4$x1 - beta) * punif(alpha * sub.data4$x2 - beta) -
+    sub.data4$cond.prob)^2)
+    
 }
 
 obj.eq.in <- function(params){
-        
-        alpha <- params[1]
-        beta <- params[2]
-        
-        
-        Q <- 0
-        
-        sub.data1 <- data[data$eq == 1, ]
-        Q <- Q + 
-                sum(((1 - punif(alpha * sub.data1$x1)) * ((1 - punif(alpha * sub.data1$x2))) - 
-                              sub.data1$cond.prob)^2)
-
-        sub.data2 <- data[data$eq == 2, ]
-        
-        Q <- Q + sum(pmin(alpha * sub.data2$x1 * sub.data2$cond.prob - 
-                                  (1 - (alpha * sub.data2$x2 - beta)) * (alpha * sub.data2$x1 - beta)^2/2 - 
-                                  (1 - alpha * sub.data2$x2) * ((alpha * sub.data2$x1)^2 - 
-                                                                        (alpha * sub.data2$x1 - beta)^2)/2, 
-                          0)^2)
-        
-        
-        Q <- Q + sum(pmax((alpha * sub.data2$x2 - beta) * sub.data2$cond.prob -
-                                  alpha * sub.data2$x1 * (1 - (alpha * sub.data2$x2)^2)/2 -
-                                  (alpha * sub.data2$x1 - beta) * ((alpha * sub.data2$x2)^2 - 
-                                                                           (alpha * sub.data2$x2 - beta)^2)/2,
-                          0)^2)
-        
-        sub.data3 <- data[data$eq == 3, ]
-        Q <- Q + sum(pmax((alpha * sub.data3$x1 - beta) * sub.data3$cond.prob -
-                                  alpha * sub.data3$x2 * (1 - (alpha * sub.data3$x1)^2)/2 -
-                                  (alpha * sub.data3$x2 - beta) * ((alpha * sub.data3$x1)^2 - 
-                                                                           (alpha * sub.data3$x1 - beta)^2)/2,
-                          0)^2)
-        
-        Q <- Q + sum(pmin(alpha * sub.data3$x2 * sub.data3$cond.prob - 
-                                  (1 - (alpha * sub.data3$x1 - beta)) * (alpha * sub.data3$x2 - beta)^2/2 - 
-                                  (1 - alpha * sub.data3$x1) * ((alpha * sub.data3$x2)^2 - 
-                                                                        (alpha * sub.data3$x2 - beta)^2)/2, 
-                          0)^2)
-        
-        sub.data4 <- data[data$eq == 4, ]
-        Q <- Q + sum((punif(alpha * sub.data4$x1 - beta) * punif(alpha * sub.data4$x2 - beta) - 
-                     sub.data4$cond.prob)^2)
+    
+    alpha <- params[1]
+    beta <- params[2]
+    
+    
+    Q <- 0
+    
+    sub.data1 <- data[data$eq == 1, ]
+    Q <- Q +
+    sum(((1 - punif(alpha * sub.data1$x1)) * ((1 - punif(alpha * sub.data1$x2))) -
+    sub.data1$cond.prob)^2)
+    
+    sub.data2 <- data[data$eq == 2, ]
+    
+    Q <- Q + sum(pmin(alpha * sub.data2$x1 * sub.data2$cond.prob -
+    (1 - (alpha * sub.data2$x2 - beta)) * (alpha * sub.data2$x1 - beta)^2/2 -
+    (1 - alpha * sub.data2$x2) * ((alpha * sub.data2$x1)^2 -
+    (alpha * sub.data2$x1 - beta)^2)/2,
+    0)^2)
+    
+    
+    Q <- Q + sum(pmax((alpha * sub.data2$x2 - beta) * sub.data2$cond.prob -
+    alpha * sub.data2$x1 * (1 - (alpha * sub.data2$x2)^2)/2 -
+    (alpha * sub.data2$x1 - beta) * ((alpha * sub.data2$x2)^2 -
+    (alpha * sub.data2$x2 - beta)^2)/2,
+    0)^2)
+    
+    sub.data3 <- data[data$eq == 3, ]
+    Q <- Q + sum(pmax((alpha * sub.data3$x1 - beta) * sub.data3$cond.prob -
+    alpha * sub.data3$x2 * (1 - (alpha * sub.data3$x1)^2)/2 -
+    (alpha * sub.data3$x2 - beta) * ((alpha * sub.data3$x1)^2 -
+    (alpha * sub.data3$x1 - beta)^2)/2,
+    0)^2)
+    
+    Q <- Q + sum(pmin(alpha * sub.data3$x2 * sub.data3$cond.prob -
+    (1 - (alpha * sub.data3$x1 - beta)) * (alpha * sub.data3$x2 - beta)^2/2 -
+    (1 - alpha * sub.data3$x1) * ((alpha * sub.data3$x2)^2 -
+    (alpha * sub.data3$x2 - beta)^2)/2,
+    0)^2)
+    
+    sub.data4 <- data[data$eq == 4, ]
+    Q <- Q + sum((punif(alpha * sub.data4$x1 - beta) * punif(alpha * sub.data4$x2 - beta) -
+    sub.data4$cond.prob)^2)
 }
 
-optim(par = c(0, 0), fn = obj.eq)
+obj <- function(params){
+    
+    alpha <- params[1]
+    beta <- params[2]
+    
+    X <- data[, c("x1", "x2")]
+    
+    A <- cbind(alpha * X - beta, alpha * X, -(alpha * X - beta), -alpha * X)
+    A <- t(matrix(t(A), nrow = 2))
+    
+    X.rev <- cbind(X[, 2], X[, 1])
+    
+    B <- cbind(-(alpha * X.rev - beta) * (alpha * X - beta)^2/2,
+    -(1 - (alpha * X.rev - beta)) * (alpha * X - beta)^2/2 -
+    (1 - alpha * X.rev) * (2 * alpha * X - beta) * beta/2,
+    alpha * X.rev * (1 - (alpha * X)^2)/2 +
+    (alpha * X.rev - beta) * (2 * alpha * X - beta) * beta/2,
+    (1 - alpha * X.rev) * (1 - (alpha * X)^2)/2)
+    B <- t(matrix(t(B), nrow = 2))
+    
+    P <- data
+    
+    
+    
+}
+
+optim(par = c(1, 1), fn = obj.eq.in)
 
 #graph
 x <- 1 : 100/100
@@ -203,5 +228,37 @@ col <- colorlut[(round(z * 100 - zlim[1]) + 1 )]
 surface3d(x, y, z, color = col)
 grid3d(c("x", "y+", "z"), n =20)
 
+# graph 2-D
+a <- seq(0, 1, by = 0.01)
+b <- seq(0, 1, by = 0.01)
+df <- setNames(expand.grid(a, b), c("a", "b"))
+df <- transform(df,
+ueq = ((x - y) * P11 - (x - y)^3/2 >= 0)
+& (x * P10 - (x - y)^2 * (1 - (x - y))/2 - (1 - x) * (2*x - y) * y/2 >= 0)
+& ((x - y) * P01 - x * (1 - x^2)/2 - (x - y) * (2 * x - y) * y/2 <= 0)
+& (x * P00 - (1 - x^2) * (1 - x)/2 <= 0)
+& ((x - y) * P11 +
+x * (1 - x^2)/2 + (x - y) * (2 * x - y) * y/2 +
+x * P10 +
+(1 + x)/2 * P00 >= 0.5)
+& ((x - y) * P01 +
+(x - y)/2 * P11 +
+x * P00 +
+(x - y)^2 * (1 - (x - y))/2 + (1 - x) * (2*x - y) * y/2 <= 0.5)
+& (x - y >= 0)
+)
+summary(df)
+df$color <- ifelse(df$ueq == TRUE, "lightblue", "orange")
+with(df[df$ueq == TRUE, ],
+plot(x = x,
+y = y,
+col=color,
+type = "p",
+xlim = c(0, 1),
+ylim = c(0, 1)))
 
 
+
+
+
+ßßßßß
