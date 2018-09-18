@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99d (TeX Live 2016)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: wrapup_20180410.aux
+The style file: plainnat.bst
+Database file #1: sample.bib
+Warning--empty journal in andrews2004confidence
+Warning--empty journal in dickstein2013accounting
+You've used 13 entries,
+            2773 wiz_defined-function locations,
+            673 strings with 6877 characters,
+and the built_in function-call counts, 5721 in all, are:
+= -- 531
+> -- 252
+< -- 10
++ -- 88
+- -- 75
+* -- 450
+:= -- 869
+add.period$ -- 39
+call.type$ -- 13
+change.case$ -- 64
+chr.to.int$ -- 13
+cite$ -- 28
+duplicate$ -- 270
+empty$ -- 510
+format.name$ -- 94
+if$ -- 1193
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 13
+newline$ -- 73
+num.names$ -- 52
+pop$ -- 120
+preamble$ -- 1
+purify$ -- 51
+quote$ -- 0
+skip$ -- 200
+stack$ -- 0
+substring$ -- 313
+swap$ -- 20
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 143
+warning$ -- 2
+while$ -- 60
+width$ -- 0
+write$ -- 171
+(There were 2 warnings)
