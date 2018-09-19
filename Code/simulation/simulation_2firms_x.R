@@ -6,6 +6,9 @@
 
 rm(list = ls()) # clear worksapce
 cat("\014") #clear the console
+
+
+library(alabama)
 # Data Generating Process -------------------------------------------------
 
 N <- 2 #no. of firms
@@ -64,124 +67,6 @@ data <- merge(data, cond.prob.df, by.x = c("x1.itv", "x2.itv"))
 
 data <- data[order(data$mktid), ]
 
-
-#obj <- function(params){
-
-alpha <- params[1]
-beta <- params[2]
-
-Q <- 0
-
-sub.data1 <- data[data$eq == 1, ]
-Q <- Q + sum(pmax(alpha * sub.data1$x1 * sub.data1$cond.prob -
-(1 - alpha * sub.data1$x2) * (1 - (alpha * sub.data1$x1)^2)/2,
-0)^2)
-Q <- Q + sum(pmax(alpha * sub.data1$x2 * sub.data1$cond.prob -
-(1 - alpha * sub.data1$x1) * (1 - (alpha * sub.data1$x2)^2)/2,
-0)^2)
-
-sub.data2 <- data[data$eq == 2, ]
-
-Q <- Q + sum(pmin(alpha * sub.data2$x1 * sub.data2$cond.prob -
-(1 - (alpha * sub.data2$x2 - beta)) * (alpha * sub.data2$x1 - beta)^2/2 -
-(1 - alpha * sub.data2$x2) * ((alpha * sub.data2$x1)^2 -
-(alpha * sub.data2$x1 - beta)^2)/2,
-0)^2)
-
-
-Q <- Q + sum(pmax((alpha * sub.data2$x2 - beta) * sub.data2$cond.prob -
-alpha * sub.data2$x1 * (1 - (alpha * sub.data2$x2)^2)/2 -
-(alpha * sub.data2$x1 - beta) * ((alpha * sub.data2$x2)^2 -
-(alpha * sub.data2$x2 - beta)^2)/2,
-0)^2)
-
-sub.data3 <- data[data$eq == 3, ]
-Q <- Q + sum(pmax((alpha * sub.data3$x1 - beta) * sub.data3$cond.prob -
-alpha * sub.data3$x2 * (1 - (alpha * sub.data3$x1)^2)/2 -
-(alpha * sub.data3$x2 - beta) * ((alpha * sub.data3$x1)^2 -
-(alpha * sub.data3$x1 - beta)^2)/2,
-0)^2)
-
-Q <- Q + sum(pmin(alpha * sub.data3$x2 * sub.data3$cond.prob -
-(1 - (alpha * sub.data3$x1 - beta)) * (alpha * sub.data3$x2 - beta)^2/2 -
-(1 - alpha * sub.data3$x1) * ((alpha * sub.data3$x2)^2 -
-(alpha * sub.data3$x2 - beta)^2)/2,
-0)^2)
-
-
-sub.data4 <- data[data$eq == 4, ]
-Q <- Q + sum(pmin((alpha * sub.data4$x1 - beta) * sub.data4$cond.prob -
-(alpha * sub.data4$x2 - beta) * (alpha * sub.data4$x1 - beta)^2/2,
-0)^2)
-Q <- Q + sum(pmin((alpha * sub.data4$x2 - beta) * sub.data4$cond.prob -
-(alpha * sub.data4$x1 - beta) * (alpha * sub.data4$x2 - beta)^2/2,
-0)^2)
-return(Q/M)
-#}
-
-obj.eq <- function(params){
-    alpha <- params[1]
-    beta <- params[2]
-    
-    Q <- 0
-    
-    sub.data1 <- data[data$eq == 1, ]
-    Q <- Q +
-    sum(((1 - punif(alpha * sub.data1$x1)) * ((1 - punif(alpha * sub.data1$x2))) -
-    sub.data1$cond.prob)^2)
-    
-    sub.data4 <- data[data$eq == 4, ]
-    Q <- Q + sum((punif(alpha * sub.data4$x1 - beta) * punif(alpha * sub.data4$x2 - beta) -
-    sub.data4$cond.prob)^2)
-    
-}
-
-obj.eq.in <- function(params){
-    
-    alpha <- params[1]
-    beta <- params[2]
-    
-    
-    Q <- 0
-    
-    sub.data1 <- data[data$eq == 1, ]
-    Q <- Q +
-    sum(((1 - punif(alpha * sub.data1$x1)) * ((1 - punif(alpha * sub.data1$x2))) -
-    sub.data1$cond.prob)^2)
-    
-    sub.data2 <- data[data$eq == 2, ]
-    
-    Q <- Q + sum(pmin(alpha * sub.data2$x1 * sub.data2$cond.prob -
-    (1 - (alpha * sub.data2$x2 - beta)) * (alpha * sub.data2$x1 - beta)^2/2 -
-    (1 - alpha * sub.data2$x2) * ((alpha * sub.data2$x1)^2 -
-    (alpha * sub.data2$x1 - beta)^2)/2,
-    0)^2)
-    
-    
-    Q <- Q + sum(pmax((alpha * sub.data2$x2 - beta) * sub.data2$cond.prob -
-    alpha * sub.data2$x1 * (1 - (alpha * sub.data2$x2)^2)/2 -
-    (alpha * sub.data2$x1 - beta) * ((alpha * sub.data2$x2)^2 -
-    (alpha * sub.data2$x2 - beta)^2)/2,
-    0)^2)
-    
-    sub.data3 <- data[data$eq == 3, ]
-    Q <- Q + sum(pmax((alpha * sub.data3$x1 - beta) * sub.data3$cond.prob -
-    alpha * sub.data3$x2 * (1 - (alpha * sub.data3$x1)^2)/2 -
-    (alpha * sub.data3$x2 - beta) * ((alpha * sub.data3$x1)^2 -
-    (alpha * sub.data3$x1 - beta)^2)/2,
-    0)^2)
-    
-    Q <- Q + sum(pmin(alpha * sub.data3$x2 * sub.data3$cond.prob -
-    (1 - (alpha * sub.data3$x1 - beta)) * (alpha * sub.data3$x2 - beta)^2/2 -
-    (1 - alpha * sub.data3$x1) * ((alpha * sub.data3$x2)^2 -
-    (alpha * sub.data3$x2 - beta)^2)/2,
-    0)^2)
-    
-    sub.data4 <- data[data$eq == 4, ]
-    Q <- Q + sum((punif(alpha * sub.data4$x1 - beta) * punif(alpha * sub.data4$x2 - beta) -
-    sub.data4$cond.prob)^2)
-}
-
 obj <- function(params){
     
     alpha <- params[1]
@@ -194,9 +79,9 @@ obj <- function(params){
                 -(alpha * X - beta), 
                 -alpha * X)
     
-    A1 <- t(matrix(t(A1), nrow = 2))
+    A1 <- t(matrix(t(A1), nrow = 2)) # 4000 by 2, each market has 4 consecutive rows, each column is for a firm
     
-    X.rev <- cbind(X[, 2], X[, 1])
+    X.rev <- cbind(X[, 2], X[, 1]) # reverse the firms' order in columns
     
     B1 <- cbind(-(alpha * X.rev - beta) * (alpha * X - beta)^2/2, 
                 -(1 - (alpha * X.rev - beta)) * (alpha * X - beta)^2/2 - 
@@ -204,38 +89,39 @@ obj <- function(params){
                 alpha * X.rev * (1 - (alpha * X)^2)/2 + 
                         (alpha * X.rev - beta) * (2 * alpha * X - beta) * beta/2, 
                 (1 - alpha * X.rev) * (1 - (alpha * X)^2)/2)
-    B1 <- t(matrix(t(B1), nrow = 2))
+    B1 <- t(matrix(t(B1), nrow = 2)) # same structure as A1
     
-    P1 <- cbind(c(data$cond.prob), c(data$cond.prob[, c(1, 3, 2, 4)]))
+    P1 <- cbind(c(data$cond.prob), c(data$cond.prob[, c(1, 3, 2, 4)])) #same structure as A1
     
     A2 <- rbind(alpha * X - beta, 
                 alpha * X,
                 alpha * X.rev * (1 - (alpha * X)^2)/2 + (alpha * X.rev - beta) * (2 * alpha * X - beta) * beta/2,
-                (1 + alpha * X)/2)
+                (1 + alpha * X)/2) 
     A2 <- matrix(as.matrix(A2), nrow = 1000)
-    A2 <- rbind(A2[, 1 : 4], A2[, 5 : 8])
+    A2 <- rbind(A2[, 1 : 4], A2[, 5 : 8]) 
+    # each row is for a firm in a market, and each firm has 1000 consecutive rows
 
     P2 <- cbind(data$cond.prob[, 1 : 2], 1, data$cond.prob[, 4])
-    P2 <- rbind(P2, P2)
+    P2 <- rbind(P2, P2[, c(1, 3, 2, 4)])
     
     
-    A3 <- rbind((alpha * X - beta)/2, 
-                (1 - (alpha * X.rev - beta)) * (alpha * X - beta)^2/2 + 
+    A3 <- rbind(-(alpha * X - beta)/2, 
+                -(1 - (alpha * X.rev - beta)) * (alpha * X - beta)^2/2 - 
                         (1 - alpha * X.rev) * (2 * alpha * X - beta) * beta/2,
-                alpha * X - beta,
-                (alpha * X - beta)/2)
+                -(alpha * X - beta),
+                -alpha * X)
     A3 <- matrix(as.matrix(A3), nrow = 1000)
     A3 <- rbind(A3[, 1 : 4], A3[, 5 : 8])
     
     P3 <- cbind(data$cond.prob[, 1], 1, data$cond.prob[, 3 : 4])
-    P3 <- rbind(P3, P3)
+    P3 <- rbind(P3, P3[, c(1, 3, 2, 4)])
     
-    mean(pmin(c(A1 * P1 - B1, rowSums(A2 * P2) - 1/2, rowSum(A3 * P3) - 1/2), 0)^2)
+    #mean(pmin(c(A1 * P1 - B1, rowSums(A2 * P2) - 1/2, rowSums(A3 * P3) + 1/2), 0)^2)
     
     
 }
 
-optim(par = c(1, 1), fn = obj.eq.in)
+optim(par = c(1, 1), fn = obj)
 
 #graph
 x <- 1 : 100/100
@@ -288,4 +174,3 @@ ylim = c(0, 1)))
 
 
 
-ßßßßß
