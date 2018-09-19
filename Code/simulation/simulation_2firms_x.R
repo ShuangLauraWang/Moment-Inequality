@@ -41,8 +41,8 @@ data$eq <- sapply(apply(eq == 1, 1, which), function(x){x[sample(length(x), size
 #different numbers indicate different eqs: 1 --> (1, 1), 2 --> (1, 0), 3 --> (0, 1), 4 --> (0, 0)
 
 y <- matrix(0, nrow = M, ncol = N)
-data$y1 <- data$eq == 2 | data$eq == 4
-data$y2 <- data$eq >= 3
+data$y1 <- data$eq <= 2
+data$y2 <- data$eq == 1 | data$eq == 3
 
 P11 <- sum(data$eq == 1)/M
 P10 <- sum(data$eq == 2)/M
@@ -60,7 +60,7 @@ colnames(cond.prob.df)[colnames(cond.prob.df) == "eq"] <- "cond.prob"
 
 data <- merge(data, cond.prob.df, by.x = c("x1.itv", "x2.itv"))
 
-data$cond.prob <- data$cond.prob[cbind(1 : nrow(data), data$eq)]
+#data$cond.prob <- data$cond.prob[cbind(1 : nrow(data), data$eq)]
 
 data <- data[order(data$mktid), ]
 
@@ -189,21 +189,48 @@ obj <- function(params){
     
     X <- data[, c("x1", "x2")]
     
-    A <- cbind(alpha * X - beta, alpha * X, -(alpha * X - beta), -alpha * X)
-    A <- t(matrix(t(A), nrow = 2))
+    A1 <- cbind(alpha * X - beta, 
+                alpha * X, 
+                -(alpha * X - beta), 
+                -alpha * X)
+    
+    A1 <- t(matrix(t(A1), nrow = 2))
     
     X.rev <- cbind(X[, 2], X[, 1])
     
-    B <- cbind(-(alpha * X.rev - beta) * (alpha * X - beta)^2/2,
-    -(1 - (alpha * X.rev - beta)) * (alpha * X - beta)^2/2 -
-    (1 - alpha * X.rev) * (2 * alpha * X - beta) * beta/2,
-    alpha * X.rev * (1 - (alpha * X)^2)/2 +
-    (alpha * X.rev - beta) * (2 * alpha * X - beta) * beta/2,
-    (1 - alpha * X.rev) * (1 - (alpha * X)^2)/2)
-    B <- t(matrix(t(B), nrow = 2))
+    B1 <- cbind(-(alpha * X.rev - beta) * (alpha * X - beta)^2/2, 
+                -(1 - (alpha * X.rev - beta)) * (alpha * X - beta)^2/2 - 
+                        (1 - alpha * X.rev) * (2 * alpha * X - beta) * beta/2, 
+                alpha * X.rev * (1 - (alpha * X)^2)/2 + 
+                        (alpha * X.rev - beta) * (2 * alpha * X - beta) * beta/2, 
+                (1 - alpha * X.rev) * (1 - (alpha * X)^2)/2)
+    B1 <- t(matrix(t(B1), nrow = 2))
     
-    P <- data
+    P1 <- cbind(c(data$cond.prob), c(data$cond.prob[, c(1, 3, 2, 4)]))
     
+    A2 <- rbind(alpha * X - beta, 
+                alpha * X,
+                alpha * X.rev * (1 - (alpha * X)^2)/2 + (alpha * X.rev - beta) * (2 * alpha * X - beta) * beta/2,
+                (1 + alpha * X)/2)
+    A2 <- matrix(as.matrix(A2), nrow = 1000)
+    A2 <- rbind(A2[, 1 : 4], A2[, 5 : 8])
+
+    P2 <- cbind(data$cond.prob[, 1 : 2], 1, data$cond.prob[, 4])
+    P2 <- rbind(P2, P2)
+    
+    
+    A3 <- rbind((alpha * X - beta)/2, 
+                (1 - (alpha * X.rev - beta)) * (alpha * X - beta)^2/2 + 
+                        (1 - alpha * X.rev) * (2 * alpha * X - beta) * beta/2,
+                alpha * X - beta,
+                (alpha * X - beta)/2)
+    A3 <- matrix(as.matrix(A3), nrow = 1000)
+    A3 <- rbind(A3[, 1 : 4], A3[, 5 : 8])
+    
+    P3 <- cbind(data$cond.prob[, 1], 1, data$cond.prob[, 3 : 4])
+    P3 <- rbind(P3, P3)
+    
+    mean(pmin(c(A1 * P1 - B1, rowSums(A2 * P2) - 1/2, rowSum(A3 * P3) - 1/2), 0)^2)
     
     
 }
