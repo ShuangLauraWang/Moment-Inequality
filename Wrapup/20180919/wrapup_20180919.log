@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  19 SEP 2018 11:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  19 SEP 2018 11:40
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**wrapup.tex
-(./wrapup.tex
+**wrapup_20180919.tex
+(./wrapup_20180919.tex
 LaTeX2e <2016/03/31>
 Babel <3.9r> and hyphenation patterns for 83 language(s) loaded.
 (/usr/local/texlive/2016/texmf-dist/tex/latex/base/article.cls
@@ -715,8 +715,8 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip51
 )
-No file wrapup.aux.
-\openout1 = `wrapup.aux'.
+No file wrapup_20180919.aux.
+\openout1 = `wrapup_20180919.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/txmi/m/it on input line 28.
 LaTeX Font Info:    Try loading font information for OML+txmi on input line 28.
@@ -840,7 +840,7 @@ LaTeX Info: Redefining \ref on input line 28.
 LaTeX Info: Redefining \pageref on input line 28.
 LaTeX Info: Redefining \nameref on input line 28.
 \@outlinefile=\write4
-\openout4 = `wrapup.out'.
+\openout4 = `wrapup_20180919.out'.
 
 LaTeX Font Info:    Try loading font information for OT1+txr on input line 30.
 
@@ -1036,100 +1036,69 @@ Package natbib Warning: Citation `cosslett1983distribution' on page 6 undefined
  on input line 339.
 
 [6]
+Overfull \hbox (8.43182pt too wide) in paragraph at lines 388--389
+\T1/txr/m/n/10 is in-fea-si-ble. There-fore, we will re-place $\OML/txmi/m/it/1
+0 E\OT1/txr/m/n/10 [\OML/txmi/m/it/10 ^^O[]\OMS/txsy/m/n/10 j\OML/txmi/m/it/10 
+y[] \OT1/txr/m/n/10 = 1\OML/txmi/m/it/10 ; y[]; X[]\OT1/txr/m/n/10 ]$ \T1/txr/m
+/n/10 with $\OML/txmi/m/it/10 E\OT1/txr/m/n/10 [\OML/txmi/m/it/10 ^^O[]\OMS/txs
+y/m/n/10 j\OML/txmi/m/it/10 ^^O[] > \OMS/txsy/m/n/10 ^^@\OML/txmi/m/it/10 r\OT1
+/txr/m/n/10 (1\OML/txmi/m/it/10 ; y[]; X[]; ^^R\OT1/txr/m/n/10 )\OML/txmi/m/it/
+10 ; y[]; X[]\OT1/txr/m/n/10 ]$\T1/txr/m/n/10 ,
+ []
 
-LaTeX Warning: Reference `ineq_uncon' on page 7 undefined on input line 381.
+
+LaTeX Warning: Reference `lowerbound' on page 7 undefined on input line 390.
 
 
-LaTeX Warning: Reference `ineq_con' on page 7 undefined on input line 453.
+LaTeX Warning: Reference `lowerbound2' on page 7 undefined on input line 426.
+
+
+Package natbib Warning: Citation `dickstein2013accounting' on page 7 undefined 
+on input line 463.
 
 
 Package natbib Warning: Citation `ciliberto2009market' on page 7 undefined on i
-nput line 479.
+nput line 468.
 
+[7]
 
-LaTeX Warning: `!h' float specifier changed to `!ht'.
+LaTeX Warning: Reference `no.of.icb' on page 8 undefined on input line 484.
 
-
-LaTeX Warning: Reference `no.of.icb' on page 7 undefined on input line 495.
-
-[7pdfTeX warning (ext4): destination with the same identifier (name{equation.5.
-15}) has been already used, duplicate ignored
-
-\@EveryShipout@Output ...@Org@Shipout \box \@cclv 
-                                                  
-l.502 ..._i, \quad \mbox{where } c_i \sim U[0,1]$$
-                                                  ]
-
-LaTeX Warning: Reference `cond_to_uncond' on page 8 undefined on input line 533
-.
-
-[8]
-
-LaTeX Warning: Reference `Ec_i|y_j' on page 9 undefined on input line 613.
-
-
-LaTeX Warning: Reference `y=11' on page 9 undefined on input line 629.
-
-
-LaTeX Warning: Reference `y=10' on page 9 undefined on input line 629.
-
-
-LaTeX Warning: Reference `Ec_i' on page 9 undefined on input line 629.
-
-[9]
-
-LaTeX Warning: Reference `y=01' on page 10 undefined on input line 666.
-
-
-LaTeX Warning: Reference `y=00' on page 10 undefined on input line 666.
-
-[10]
-
-LaTeX Warning: Reference `y1=1' on page 11 undefined on input line 748.
-
-
-LaTeX Warning: Reference `y1=0' on page 11 undefined on input line 748.
-
-
-Overfull \hbox (1.54506pt too wide) detected at line 756
-[][]
- []
-
-No file wrapup.bbl.
+No file wrapup_20180919.bbl.
 
 Package natbib Warning: There were undefined citations.
 
-[11]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 761.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 761.
- (./wrapup.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 761.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 761.
+[8]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 490.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 490.
+ (./wrapup_20180919.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 490.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 490.
 
 
-Package rerunfilecheck Warning: File `wrapup.out' has changed.
+Package rerunfilecheck Warning: File `wrapup_20180919.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
 (rerunfilecheck)                or use package `bookmark'.
 
-Package rerunfilecheck Info: Checksums for `wrapup.out':
+Package rerunfilecheck Info: Checksums for `wrapup_20180919.out':
 (rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  AD31200D8D3F19FA1B86F089335AE07E;785.
+(rerunfilecheck)             After:  574469991A3BE6CE1A955635A2B34ECD;742.
 
 LaTeX Warning: There were undefined references.
 
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 761.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 490.
  ) 
 Here is how much of TeX's memory you used:
- 18607 strings out of 493014
- 337989 string characters out of 6133351
- 427679 words of memory out of 5000000
- 21690 multiletter control sequences out of 15000+600000
- 74151 words of font info for 126 fonts, out of 8000000 for 9000
+ 18569 strings out of 493014
+ 337700 string characters out of 6133351
+ 424679 words of memory out of 5000000
+ 21681 multiletter control sequences out of 15000+600000
+ 72835 words of font info for 124 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 62i,11n,56p,1253b,351s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 62i,11n,56p,1262b,351s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2016/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2016/texmf-dist/fonts/type1/public/txfonts/rtxb.pfb></usr/local/texlive/
 2016/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/local/texlive/2016/t
@@ -1140,10 +1109,10 @@ s/type1/public/txfonts/txsy.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1
 imes/utmb8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmbi
 8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></u
 sr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on wrapup.pdf (11 pages, 117677 bytes).
+Output written on wrapup_20180919.pdf (8 pages, 102777 bytes).
 PDF statistics:
- 178 PDF objects out of 1000 (max. 8388607)
- 153 compressed objects within 2 object streams
- 70 named destinations out of 1000 (max. 500000)
+ 138 PDF objects out of 1000 (max. 8388607)
+ 116 compressed objects within 2 object streams
+ 43 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

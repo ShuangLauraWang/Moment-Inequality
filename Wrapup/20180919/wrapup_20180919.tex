@@ -354,124 +354,113 @@ Then, we will construct moment inequalities and use the empirical $\hat{F}(\cdot
 
 \bigskip
 
-Taking each market as an observation, we have
+For any given $y_{-im}$,
 
-\begin{equation}
+$$
 \begin{array}{rcl}
-\displaystyle \sum_{i \in I_m} r(1,y_{-im},X^o_{im},\theta)+ \epsilon_{im} \geq 0\\
-\displaystyle \sum_{i \not\in I_m} r(1,y_{-im},X^o_{im},\theta)+ \epsilon_{im} \leq 0
+&&y_{im}=1 \mbox{ \quad iff \quad }  \pi(1,y_{-im},X_{im}) \geq 0 \\
+&\Longleftrightarrow&  (-1)^{y_{im}+1}[r(1,y_{-im},X^o_{im},\theta)+ \epsilon_{im}]\geq 0 \\
 \end{array}
-\label{ineq_uncon}
-\end{equation}
+$$
 
+Consider the cases where $y_{im}=1$,
 
-which necessarily implies the following moment inequality
-
-\begin{equation}
+$$
 \begin{array}{rcl}
-E[\displaystyle \sum_{i \in I_m} r(1,y_{-im},X^o_{im},\theta)+ \epsilon_{im} | y_{im}, y_{-im}, X^o_{m},\mathcal{S}] &\geq& 0 \\ 
-E[\displaystyle \sum_{i \not\in I_m} r(1,y_{-im},X^o_{im},\theta)+ \epsilon_{im} |y_{im}, y_{-im}, X^o_{m}, \mathcal{S}] &\leq& 0 
+&& r(1,y_{-im},X^o_{im},\theta)+ \epsilon_{im} \\
+&=& r(1,y_{-im},X^o_{im},\theta)+ E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{im}] + \epsilon_{im} - E[\epsilon_{im}|y_{im} = 1, , y_{-im}, X^o_{im}]\\
+&\geq& 0
 \end{array}
-\nonumber
-\end{equation}
+$$
 
 
-
-
-where $(y_{im}, y_{-im}, X^o_{m})$ represents an observed market, and $\mathcal{S}$ is some unobservable equilibrium selection mechanism that is uniform across markets.\footnote{The reason that we rewrite Eq.(\ref{ineq_uncon}) in the form of conditional expectation is for constructing sample analog, for which the key step is calculating the conditional expectation of $\epsilon_{im}$. When there are multiple equilibria, that conditional expectation depends on the equilibrium selection mechanism, and that is why we include $\mathcal{S}$ in the condition.} Since the deterministic part of the profit $r(\cdot)$ does not depend on the selection mechanism, the conditional expectations above can be further rewritten as 
+Since $ E[\epsilon_{im} - E[\epsilon_{im}|y_{im} = 1, , y_{-im}, X^o_{im}]|y_{im} = 1] = 0$,
 
 
 \begin{equation}
-\begin{array}{rcl}
-\displaystyle E[ \sum_{i \in I_m} r(1,y_{-im},X^o_{im},\theta)| y_{im}, y_{-im}, X^o_{m}]+ E[ \sum_{i \in I_m} \epsilon_{im} | y_{im}, y_{-im}, X^o_{m},\mathcal{S}] &\geq& 0 \\ 
-\displaystyle  E[\sum_{i \not\in I_m} r(1,y_{-im},X^o_{im},\theta)| y_{im}, y_{-im}, X^o_{m}]+ E[\sum_{i \not\in I_m} \epsilon_{im} |y_{im}, y_{-im}, X^o_{m}, \mathcal{S}] &\geq& 0
-\end{array}
-\label{ineq_con}
+E[r(1,y_{-im},X^o_{im},\theta)+ E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{im}] | y_{im} = 1] \geq 0
+\label{lowerbound}
 \end{equation}
 
 
 
 
+However, due to multiplicity, $Prob(y_{im} = 1, y_{-im}, X^o_{im})$ is unknown, calculating $E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{im}]$ is infeasible. Therefore, we will replace $E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{im}]$ with $E[\epsilon_{im}|\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{-im}, X^o_{im}]$, an expectation conditional on a necessary condition for observing $(y_{im}=1, y_{-im}, X^o_{im})$. 
 
-
-In particular, $E[\epsilon_{im}|y_{im},y_{-im}, X^o_{m}, \mathcal{S}]$ is infeasible to calculate without assumption on equilibrium selection mechanism. To circumvent those arbitrary assumptions, we instead use an upper bound for that conditional expectation when firm $i$ is an incumbent, and a lower bound for when the firm is a potential entrant i.e.,
+Then, Eq.(\ref{lowerbound}) can be rewritten as 
 
 \begin{equation}
-\begin{array}{rcl}
-\displaystyle E[\epsilon_{im}|\epsilon_{im} \geq - \min_{y_{-im}}r(1,y_{-im},X^o_{jm},\theta), X^o_{im}] & \geq & \displaystyle E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{m}, \mathcal{S}], \ \forall i \in I_m  \\
-\displaystyle E[\epsilon_{im}|\epsilon_{im} \leq - \max_{y_{-im}}r(1,y_{-im},X^o_{jm},\theta), X^o_{im}] & \leq & \displaystyle E[\epsilon_{im}|y_{im} = 0, y_{-im}, X^o_{m}, \mathcal{S}], \ \forall i \not\in I_m 
-\end{array}
-\label{ineq_bound}
+E[r(1,y_{-im},X^o_{im},\theta)+ E[\epsilon_{im}|\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{-im}, X^o_{im}] | y_{im} = 1] \geq 0
+\label{lowerbound2}
+\end{equation}
+
+
+Since 
+
+\begin{equation}
+E[\epsilon_{im}|\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{-im}, X^o_{im}] < E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{im}]
+\footnote{
+Given $y_{im} = 1$,
+$$E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{im}] > E[\epsilon_{im}|y_{-im}, X^o_{im}]$$
+Therefore, $\exists B \in R$ s.t. 
+
+$$E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{im}] = E[\epsilon_{im}|\epsilon_{im}>B, y_{-im}, X^o_{im}]$$.
+
+Since $\{\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{-im}, X^o_{im}\}$ is a necessary condition for $\{y_{im} = 1, y_{-im}, X^o_{im}\}$,
+
+$$B > -r(1,y_{-im},X^o_{im},\theta)$$
+
+which indicates that 
+
+$$E[\epsilon_{im}|\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{-im}, X^o_{im}] < E[\epsilon_{im}|\epsilon_{im}>B, y_{-im}, X^o_{im}] = E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{im}]$$
+
+}
+\label{ncon}
 \end{equation}
 
 
 
-% \footnote{Take the case where $i \in I_m$ as an example, first show that 
-
-% $$ E[\epsilon_{im}|\epsilon_{im} \geq - \min_{y_{-im}}r(1,y_{-im},X^o_{jm},\theta),  y_{-im}, X^o_{im}] = E[\epsilon_{im}|\epsilon_{im} \geq - \min_{y_{-im}}r(1,y_{-im},X^o_{jm},\theta), X^o_{im}]$$
+we would expect the identified set of $\theta$ to be enlarged instead of being incorrectly shrunk. 
 
 
+Since the outside conditional expectation in Eq.($\ref{lowerbound2}$) can be replace with a sample average over all incumbents and given $\hat{F}(\cdot)$ from the first stage, its sample analog is 
 
-
-% Given the $i.i.d$ assumption on $\epsilon_{im}$, the LHS of Eq.(\ref{ineq_bound}) can be simplified as 
-
-% $$E[\epsilon_{im}|r(1,y_{-im},X^o_{im},\theta)+ \epsilon_{im} \geq 0, y_{im} = 1, y_{-im}, X^o_{im}] $$
-
-% which is equivalent to 
-
-% $$E[\epsilon_{im}|\epsilon_{im} \geq -r(1,y_{-im},X^o_{im},\theta), y_{im} = 1, y_{-im}, X^o_{im}] $$
-
-% Furthermore,
-
-% $$
-% E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{im}, \mathcal{S}_m] \geq E[\epsilon_{im}|y_{-im}, X^o_{im}, \mathcal{S}_m]
-% $$
-
-% Therefore, $\exists B \in R$ s.t. 
-
-% $$E[\epsilon_{im}|y_{im} = 1, y_{-im}, X^o_{im}, \mathcal{S}_m] = E[\epsilon_{im}|\epsilon_{im}>B, y_{-im}, X^o_{im}, \mathcal{S}_m]$$.
-
-% Since $\{\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{im} = 1,  y_{-im}, X^o_{im}\}$ is a necessary condition for $\{y_{im} = 1, y_{-im}, X^o_{im}, \mathcal{S}_m\}$,
-
-% $$B > -r(1,y_{-im},X^o_{im},\theta)$$
-
-% which indicates that 
-
-% $$
-% \begin{array}{cl}
-%    &E[\epsilon_{im}|\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{im} = 1, y_{-im}, X^o_{im}] \\
-% \leq &E[\epsilon_{im}|\epsilon_{im}>B, y_{im} = 1, y_{-im}, X^o_{im}, \mathcal{S}_m] \\
-% =  &E[\epsilon_{im}|y_{im} = 1, y_{im} = 1, y_{-im}, X^o_{im}, \mathcal{S}_m] 
-% \end{array}
-% $$
-
-% i.e. $E[\epsilon_{im}|\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{im} = 1, y_{-im}, X^o_{im}]$ is the lower bound for $E[\epsilon_{im}|y_{im} = 1, y_{im} = 1, y_{-im}, X^o_{im}, \mathcal{S}_m]$.
-
-% Similarly,  we can show that $E[\epsilon_{im}|\epsilon_{im} < -r(1,y_{-im},X^o_{im},\theta), y_{im} = 0, y_{-im}, X^o_{im}]$ is the upper bound for $E[\epsilon_{im}|y_{im} = 0, y_{-im}, X^o_{im}, \mathcal{S}_m]$.}
-
-
-Therefore, replacing the conditional expectation of $\epsilon_{im}$ in Eq.(\ref{ineq_con}) with their bounds would give us 
-
-
-
-\begin{equation}
-\begin{array}{rcl}
-\displaystyle E[\sum_{i \in I_m}r(1,y_{-im},X^o_{im},\theta)| y_{im}, y_{-im}, X^o_{m}]+ E[\sum_{i \in I_m}\epsilon_{im} |\epsilon_{im} \geq - \min_{y_{-im}}r(1,y_{-im},X^o_{jm},\theta), X^o_{m}] &\geq& 0 \\ 
-\displaystyle E[\sum_{i \not\in I_m} r(1,y_{-im},X^o_{im},\theta)| y_{im}, y_{-im}, X^o_{m}]+ E[\sum_{i \not\in I_m} \epsilon_{im} |\epsilon_{im} \leq - \max_{y_{-im}}r(1,y_{-im},X^o_{jm},\theta), X^o_{m}] &\geq& 0
-\end{array}
-\label{ineq_con_bound}
-\end{equation}
+$$
+\sum_{i \in I_m,m} r(1,y_{-im},X^o_{im},\theta)+ \dfrac{\int_{-r(1,y_{-im},X^o_{im},\theta)} \epsilon_{im}d\hat{F}(\epsilon_{im};\theta)}{ 1 - \hat{F}(-r(1,y_{-im},X^o_{im},\theta); \theta)} \geq 0
+$$
 
 \bigskip
 
-Finally, we will construct sample analog for the following conditional moment,
+Similarly, given $y_{im} = 0$,
+
+$$E[r(1,y_{-im},X^o_{im},\theta) + E[\epsilon_{im}|\epsilon_{im} < -r(1,y_{-im},X^o_{im},\theta), y_{-im}, X^o_{im}]| y_{im} = 0] \leq 0$$
+
+and its sample analog is an average over all entrants,
+
+$$
+\sum_{i \in I^c_m,m} r(1,y_{-im},X^o_{im},\theta)+ \dfrac{\int^{-r(1,y_{-im},X^o_{im},\theta)} \epsilon_{im}d\hat{F}(\epsilon_{im};\theta)}{ \hat{F}(-r(1,y_{-im},X^o_{im},\theta); \theta)} \geq 0 \footnote{
+Any $\theta$ can not be rejected by the moment inequalities are in the identified set.
+
+\bigskip
+
+Following \textbf{Lemma A.6.1} in \cite{dickstein2013accounting}, we can show that one moment inequality increases with the index, the other decreases with the index.
+
+\bigskip
+
+Furthermore,
 
 $$
 \begin{array}{rcl}
-\displaystyle E[r(X^o_m) \times (\sum_{i \in I_m}r(1,y_{-im},X^o_{im},\theta) + E [\epsilon_{im} |\epsilon_{im} \geq - \min_{y_{-im}}r(1,y_{-im},X^o_{jm},\theta), X^o_{m}] )|y_{im}, y_{-im}, \mathcal{S}] &\geq& 0 \\
-\displaystyle E[r(X^o_m) \times (\sum_{i \in I_m}r(1,y_{-im},X^o_{im},\theta) + E [\epsilon_{im} |\epsilon_{im} \leq - \max_{y_{-im}}r(1,y_{-im},X^o_{jm},\theta), X^o_{m}] )|y_{im}, y_{-im}, \mathcal{S}] &\leq& 0
+& & E[y_{-im}\{ \epsilon_{im} - E[\epsilon_{im}|\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{-im}, X^o_{im}] \} | y_{im}] \\
+&=& E[y_{-im}\epsilon_{im}|y_{im}] - E[y_{-im}E[\epsilon_{im}|\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{-im}, X^o_{im}] | y_{im}] \\ 
+&=& E[y_{-im}\epsilon_{im}|y_{im}] - E[E[y_{-im}\epsilon_{im}|\epsilon_{im} > -r(1,y_{-im},X^o_{im},\theta), y_{-im}, X^o_{im}] | y_{im}] \\
+&=& E[y_{-im}\epsilon_{im}|y_{im}] - E[y_{-im}\epsilon_{im}|y_{im}] \\
+&=& 0 
 \end{array}
 $$
+
+it seems that the endogeneity problem is somehow tackled. 
+} $$
 
 
 \section{Data}
@@ -495,269 +484,7 @@ In \cite{ciliberto2009market}, the main data comes from the second quarter of th
 Particularly, Table.\ref{no.of.icb} gives the number of incumbents in each market, and those with less than 2 takes $37.93\%$.
 
 
-
-\section{Example}
-
-
-$$\pi_i = \alpha - \beta y_{-i} - c_i, \quad \mbox{where } c_i \sim U[0,1]$$
-
-$$\begin{cases}
-E[\alpha - \beta - c_i | y_i = 1, y_{-i} = 1] > 0\\
-E[\alpha - c_i | y_{i} = 1, y_{-i} = 0] > 0 \\
-E[\alpha - \beta  - c_i | y_{i} = 0, y_{-i} = 1] < 0 \\
-E[\alpha - c_i | y_{i} = 0, y_{-i} = 0] < 0
-\end{cases}$$
-
-$\Longleftrightarrow$
-
-$$\begin{cases}
- (\alpha - \beta)Prob\{y_i = 1, y_{-i} = 1\} - \int_{G_{1,1}}c_if(c_i, c_{-i})dc_idc_{-i} > 0\\
- \alpha Prob\{y_i = 1, y_{-i} = 0\} - \int_{G_{1,0}}c_if(c_i, c_{-i})dc_idc_{-i}> 0\\
-- (\alpha - \beta)Prob\{y_i = 0, y_{-i} = 1\} + \int_{G_{0,1}}c_if(c_i, c_{-i})dc_idc_{-i} > 0\\
-- \alpha Prob\{y_i = 0, y_{-i} = 0\} + \int_{G_{0,0}}c_if(c_i, c_{-i})dc_idc_{-i} > 0
-\end{cases}$$
-
-where $G_{y_i, y_{-i}} = \{c_i:  Y_i = y_i \ \& \ Y_{-i} = y_{-i}\}$
-
-
-Taking $E[\alpha  - c_i | y_i = 1, y_{-i} = 0] > 0 \Longleftrightarrow \alpha Prob\{y_i = 1, y_{-i} = 0\} - \int_{G_{1,0}}c_if(c_i)dc_i > 0$ as an example,
-
-\begin{equation}
- \begin{array}{cl}
-     &E[\alpha - c_i | y_i = 1, y_{-i} = 0] > 0\\
-    \Longleftrightarrow&E[\alpha - c_i|y_i = 1, y_{-i} = 0]Prob\{y_i = 1, y_{-i} = 0\} > 0
-\end{array}
-\label{cond_to_uncond}
-\end{equation}
-
-The equivalence is implied by $Prob\{y_i = 1, y_{-i} = 0\} > 0$. We then rewrite Eq.(\ref{cond_to_uncond}) as
-
-$$
-\begin{array}{cl}
-      &\alpha Prob\{y_i = 1, y_{-i} = 0\} - E[c_i|y_i = 1, y_{-i} = 0]Prob\{y_i = 1, y_{-i} = 0\}\\
-    =& \alpha Prob\{y_i = 1, y_{-i} = 0\} - \dfrac{\int_{G_{1,0}}c_if(c_i, c_{-i})dc_idc_{-i}}{Prob\{y_i = 1, y_{-i} = 0\}} Prob\{y_i = 1, y_{-i} = 0\}\\
-    =& \alpha Prob\{y_i = 1, y_{-i} = 0\} - \int_{G_{1,0}}c_if(c_i, c_{-i})dc_idc_{-i}
-\end{array}
-$$
-
-Specifically, given the iid uniform distribution assumption on $c$, $f(c_i, c_{-i}) = 1$. Furthermore, due to multiple equilibria, $G_{1,0}$ is unknown, which makes the calculation of $\int_{G_{1,0}}c_if(c_i)dc_idc_{-i}$ infeasible.  We will substitute $G_{1,0}$ with its sufficient condition, i.e., the area where $y=(1, 0)$ is the unique equilibrium. 
-
-In this specific case, there are two scenarios when $y = (1, 0)$ is the unique solution: first, firm i enters regardless of firm j's action and firm j doesn' enter; second, firm j doesn't enter regardless firm i's action, and firm i enters only when  firm j doesn't. Mathematically,
-
-
-$$
-\begin{array}{rcl}
-     \int_{G_{1,0}}c_idc_idc_{-i} 
-     & > & \int_{\alpha - \beta}^1\int_{0}^{\alpha - \beta}c_idc_idc_{-i} + \int_\alpha^1\int_{\alpha - \beta}^\alpha c_idc_idc_{-i} \\
-     & = &  \big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}
-\end{array}
-$$
-
-Therefore, the system of inequalities can be rewritten as 
-
-
-$$\begin{cases}
- (\alpha - \beta)P_{11} - (\alpha - \beta)\dfrac{ (\alpha - \beta)^2}{2} > 0\\
- \alpha P_{10} - \{\big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}\}> 0\\
-- (\alpha - \beta)P_{01} + \{\alpha\dfrac{1 - \alpha^2}{2} + (\alpha- \beta)\dfrac{(2\alpha - \beta)\beta}{2} \}> 0\\
-- \alpha P_{00} + (1 - \alpha)\dfrac{1 - \alpha^2}{2} > 0
-\end{cases}$$
-
-
-
-Observation should be at market level.
-
-Objective function
-
-$$
-\begin{array}{rcl}
-Q(\theta) & = & ||\big((\alpha - \beta)P_{11} - \dfrac{(\alpha - \beta)^2}{2}(\alpha - \beta))_-|| + \\
-&& \quad ||\big(\alpha P_{10} - \{\big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}\})_-|| + \\
-&& \quad ||\big((\alpha - \beta)P_{0,1} - \{\big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}\})_+|| + \\
-&& \quad ||\big(\alpha P_{0,0} - (1 - \alpha)\dfrac{1 - \alpha^2}{2})_+||
-\end{array}
-$$
-
-\textbf{Trying to incorporate the information that $E[c_i] = \dfrac{1}{2}$}\footnote{Motivation: trying to exclude the case where $\alpha = \beta = 0$. If that is the case, we should observe $P_{00} = 1$ and $P_{11} = P_{10} = P_{01} = 0$. In terms of conditional expectation, it leads to $E[c_i] = E[c_i|y_{i} = 0, y_{-i} = 0]P_{00} + ...= \dfrac{1 + \alpha}{2}P_{00} + ...= \dfrac{1}{2}$, given $\alpha = \beta = 0$, $\dfrac{1}{2}P_{00} = \dfrac{1}{2}$, which would be violated unless $P_{00} = 1$}
-
-\begin{equation}
-\begin{array}{rcl}
-    E[c_i] 
-    &=& E\Big[E[c_i|y_{-i} = 1]Prob(y_i = 1) + E[c_i|y_{-i} = 0]Prob(y_i = 0)\Big]\\
-    &=& E\Big[E[c_i|y_{-i} = 1]E[y_{-i}] + E[c_i|y_{-i} = 0]E[1 - y_{-i}]\Big]\\
-    &=& E\Big[y_{-i}E[c_i|y_{-i} = 1] + (1 - y_{-i})E[c_i|y_{-i} = 0]\Big]\\
-    &=& \dfrac{1}{2}
-\end{array}
-\label{Ec_i}
-\end{equation}
-
-Furthermore,
-
-\begin{equation}
-\begin{array}{rcl}
-    E[c_i|y_{-i}] 
-&=& E[E[c_i|y_i, y_{-i}]|y_{-i}]\\
-&=& E[E[c_i|y_i = 1, y_{-i}]Prob(y_i = 1 | y_{-i}) + E[c_i|y_i = 0, y_{-i}]Prob(y_i = 0 | y_{-i})|y_{-i}]\\
-&=& E[E[c_i|y_i = 1, y_{-i}]E[y_i | y_{-i}] + E[c_i|y_i = 0, y_{-i}]E[1 - y_i | y_{-i}]|y_{-i}] \\
-&=& E[y_iE[c_i|y_i = 1, y_{-i}] + (1 - y_i)E[c_i|y_i = 0, y_{-i}]|y_{-i}]
-\end{array}
-\label{Ec_i|y_j}
-\end{equation}
-
-Given $E[\alpha - \beta y_{-i} - c_i|y_i = 1, y_{-i}] > 0$, 
-
-\begin{equation}
-    \begin{array}{rcl}
-        &&     E[y_i(\alpha - \beta y_{-i} - c_i)|y_{-i}] > 0 \\
-        & \Longrightarrow & E[y_i(\alpha - \beta y_{-i}) - y_iE[c_i|y_i = 1, y_{-i}]|y_{-i}] > 0 \\
-        & \Longrightarrow & E[y_i(\alpha - \beta y_{-i}) - c_i + (1 - y_i)E[c_i|y_i = 0, y_{-i}]|y_{-i}] > 0, \qquad \mbox{by Eq.(\ref{Ec_i|y_j})}\\
-        & \Longrightarrow & E\Bigg[y_{-i}E\Big[y_i(\alpha - \beta y_{-i}) - c_i + (1 - y_i)E[c_i|y_i = 0, y_{-i}]\Big|y_{-i} = 1\Big]\Bigg] \\
-        & = & E\Bigg[y_{-i}\Big\{E[y_i(\alpha - \beta)|y_{-i} = 1] - E[c_i|y_{-i} = 1] + E[1 - y_i|y_{-i} = 1]E[c_i|y_i = 0, y_{-i} = 1]\Big\}\Bigg] > 0
-\end{array}
-\label{y=11}
-\end{equation}
-
-
-Similarly,
-
-\begin{equation}
-E\Bigg[(1 - y_{-i})\Big\{E[y_i\alpha|y_{-i} = 0] - E[c_i|y_{-i} = 0] + E[1 - y_i|y_{-i} = 0]E[c_i|y_i = 0, y_{-i} = 0]\Big\}\Bigg] > 0
-\label{y=10}
-\end{equation}
-
-
-Combining Eq.(\ref{y=11}) and Eq.(\ref{y=10}), by Eq.(\ref{Ec_i}), we have
-
-\begin{equation}
-\begin{array}{rl}
-    & E\Bigg[y_{-i}\Big\{(\alpha - \beta)E[y_i|y_{-i} = 1] + E[1 - y_i|y_{-i} = 1]]E[c_i|y_i = 0, y_{-i} = 1] \Big\}   \\
-    & \qquad + (1 - y_{-i})\Big\{\alpha E[y_i|y_{-i} = 0] + E[1 - y_i|y_{-i} = 0]E[c_i|y_i = 0, y_{-i} = 0]\Big\}\Bigg] - \dfrac{1}{2}> 0 
-\end{array}
-\end{equation}
-
-Substitute the expected entry decisions with the observed probabilities, 
-
-\begin{equation}
-    (\alpha - \beta)P_{11} + P_{01}E[c_i|y_i = 0, y_{-i} = 1] + \alpha P_{10} + P_{00}E[c_i|y_i = 0, y_{-i} = 0] - \dfrac{1}{2} > 0
-\end{equation}
-
-Given that $P_{01}E[c_i|y_i = 0, y_{-i} = 1] < \alpha\dfrac{1 - \alpha^2}{2} + (\alpha- \beta)\dfrac{(2\alpha - \beta)\beta}{2}$ and $E[c_i|y_i = 0, y_{-i} = 0] = \dfrac{1 + \alpha}{2}$,
-
-\begin{equation}
-    (\alpha - \beta)P_{11} + \alpha\dfrac{1 - \alpha^2}{2} + (\alpha- \beta)\dfrac{(2\alpha - \beta)\beta}{2} + \alpha P_{10} + \dfrac{1 + \alpha}{2}P_{00} - \dfrac{1}{2} > 0
-    \label{y1=1}
-\end{equation}
-
-Similarly, given $E[\alpha - \beta y_{-i} - c_i|y_i = 0, y_{-i}] < 0$, 
-
-\begin{equation}
-    E\Bigg[y_{-i}\Big\{E[(1 - y_i)(\alpha - \beta) | y_{-i} = 1] - E[c_i | y_{-i} = 1] + E[y_i|y_{-i} = 1]E[c_i|y_i = 1, y_{-i} = 1]\Big\}\Bigg] < 0
-    \label{y=01}
-\end{equation}
-
-and 
-
-\begin{equation}
-    E\Bigg[(1 - y_{-i})\Big\{
-    E[(1 - y_i)\alpha| y_{-i} = 0] - E[c_i | y_{-i} = 0] + E[y_i|y_{-i} = 0]E[c_i|y_i = 1, y_{-i} = 0] \Big\}\Bigg] < 0 
-    \label{y=00}
-\end{equation}
-
-Combining Eq.(\ref{y=01}) and Eq.(\ref{y=00}),
-
-
-\begin{equation}
-    \begin{array}{rl}
-    &E\Bigg[y_{-i}\Big\{(\alpha - \beta) E[1 - y_i| y_{-i} = 1] + E[y_i|y_{-i} = 1]E[c_i|y_i = 1, y_{-i} = 1]\Big\}\\
-    & \qquad (1 - y_{-i})\Big\{
-    \alpha E[1 - y_i| y_{-i} = 0]  + E[y_i|y_{-i} = 0]E[c_i|y_i = 1, y_{-i} = 0] \Big\} \Bigg] < 0 
-    \end{array}
-\end{equation}
-
-Substitute the expected entry decisions with the observed probabilities, 
-
-\begin{equation}
-    (\alpha - \beta)P_{01} + P_{11}E[c_i|y_i = 1, y_{-i} = 1] + \alpha P_{00} + P_{10}E[c_i|y_i = 1, y_{-i} = 0] - \dfrac{1}{2} < 0
-    \label{y1=0}
-\end{equation}
-
-Given that $E[c_i|y_i = 1, y_{-i} = 1] = \dfrac{\alpha - \beta}{2}$ and $P_{10}E[c_i|y_i = 1, y_{-i} = 0] < \big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}$, 
-
-\begin{equation}
-    (\alpha - \beta)P_{01} + \dfrac{\alpha - \beta}{2}P_{11} + \alpha P_{00} + \big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2} - \dfrac{1}{2} < 0
-\end{equation}
-
-{\color{violet}
-\textbf{Information:}
-\begin{enumerate}
-    \item Profit Inequalities
-    \item $E[c_i] = \dfrac{1}{2}$
-    \item $P_{00} = (1 - \alpha)^2$, $P_{11} = (\alpha - \beta)^2$ 
-\end{enumerate}
-}
-
-{\color{orange}
-\textbf{Questions:}
-\begin{enumerate}
-    \item How to incorporate all inequalities?
-    \item Any information reused?
-    \item How to determine between observed probabilities and predicted ones?
-    \item Conditional (profit inequalities) v.s. unconditional moments ($E[c_i] = \dfrac{1}{2}$)
-\end{enumerate}
-}
-
-Consider the case 
-
-$$\pi_i = \alpha x_i - \beta y_{-i} - c_i, \quad \mbox{where } c_i \sim U[0,1]$$
-
-\begin{equation}
-    \begin{array}{cl}
-    \displaystyle 
-    & E[\alpha x_i - \beta y_{-i} - c_i | y_i = 1, y_{-i} = 1, x]  > 0  \\
-    \displaystyle \Longleftrightarrow 
-    & E[y_iy_{-i}(\alpha x_i - \beta y_{-i} - c_i )|x]  > 0\\
-    \displaystyle \Longleftrightarrow 
-    & E \Big[y_iy_{-i}E[(\alpha x_i - \beta y_{-i} - c_i )|y_i = 1, y_{-i} = 1, x] \Big|x \Big]  > 0\\
-    \displaystyle \Longleftrightarrow 
-    & E \Big[y_iy_{-i} \big\{(\alpha x_i - \beta) - E[c_i |y_i = 1, y_{-i} = 1, x] \big\} \Big|x \Big]  > 0\\
-    \displaystyle \Longleftrightarrow 
-    & (\alpha x_i - \beta)E[y_iy_{-i}|x] - E[c_i |y_i = 1, y_{-i} = 1, x]E[y_iy_{-i}|x]  > 0\\
-    \displaystyle \Longleftrightarrow & (\alpha x_i - \beta)Prob\{ y_i = 1, y_{-i} = 1 |x \} - \int_0^{\alpha x_{-i} - \beta}\int_0^{\alpha x_{i} - \beta}c_if(c_i,c_{-i})dc_idc_{-i} > 0 \\
-    \displaystyle \Longleftrightarrow 
-    & (\alpha x_i - \beta)P_{11|x} - (\alpha x_{-i} - \beta)\dfrac{(\alpha x_{i} - \beta)^2}{2} > 0
-    \end{array}
-\end{equation}
-
-Following a similar process, we will reach to 
-
-$$\begin{cases}
-(\alpha x_1 - \beta)P_{11|x} - (\alpha x_2 - \beta)\dfrac{ (\alpha x_1 - \beta)^2}{2} > 0\\
-\alpha x_1 P_{10|x} - \{\big(1 - (\alpha x_2 - \beta)\big)\dfrac{(\alpha x_1 - \beta)^2}{2} + (1 - \alpha x_2)\dfrac{(2\alpha x_1 - \beta)\beta}{2}\} > 0\\
-- (\alpha x_1- \beta)P_{01|x} + \{\alpha x_2\dfrac{1 - (\alpha x_1)^2}{2} + (\alpha x_2- \beta)\dfrac{(2\alpha x_1 - \beta)\beta}{2} \}  > 0\\
-- \alpha x_1 P_{00|x} + (1 - \alpha x_2)\dfrac{1 - (\alpha x_1)^2}{2}> 0
-\end{cases}$$
-
-
-$$\begin{cases}
-(\alpha x_2 - \beta)P_{11|x} - (\alpha x_1 - \beta)\dfrac{ (\alpha x_2 - \beta)^2}{2} > 0\\
-- (\alpha x_2- \beta)P_{10|x} + \{\alpha x_2\dfrac{1 - (\alpha x_2)^2}{2} + (\alpha x_1- \beta)\dfrac{(2\alpha x_2 - \beta)\beta}{2} \} > 0\\
- \alpha x_2 P_{01|x} - \{\big(1 - (\alpha x_1 - \beta)\big)\dfrac{(\alpha x_2 - \beta)^2}{2} + (1 - \alpha x_1)\dfrac{(2\alpha x_2 - \beta)\beta}{2}\} > 0\\
-- \alpha x_2 P_{00|x} + (1 - \alpha x_1)\dfrac{1 - (\alpha x_2)^2}{2} > 0
-\end{cases}$$
-
-And the counterpart for Eq.(\ref{y1=1}) 7 Eq.(\ref{y1=0}) is 
-
-
-\begin{equation}
-    \begin{array}{rl}
-         (\alpha x_1 - \beta)P_{11|x} + \alpha x_2\dfrac{1 - (\alpha x_1)^2}{2} + (\alpha x_2 - \beta)\dfrac{(2\alpha x_1 - \beta)\beta}{2} + \alpha x_1 P_{10|x} + \dfrac{1 + \alpha x_1}{2}P_{00|x} - \dfrac{1}{2} & > 0  \\
-         (\alpha x_1 - \beta)P_{01|x} + \dfrac{\alpha x_1 - \beta}{2}P_{11|x} + \alpha x_1 P_{00|x} + \big(1 - (\alpha x_2 - \beta)\big)\dfrac{(\alpha x_1 - \beta)^2}{2} + (1 - \alpha x_2)\dfrac{(2\alpha x_1 - \beta)\beta}{2} - \dfrac{1}{2} & < 0
-    \end{array}
-\end{equation}
-
 \bibliographystyle{plainnat}
 \bibliography{sample}
 
 \end{document}
-
-
