@@ -72,56 +72,66 @@ obj <- function(params){
     alpha <- params[1]
     beta <- params[2]
     
-    X <- data[, c("x1", "x2")]
+    data$ineq1 <- (alpha * data$x1 - beta) * data$cond.prob[, 1] - 
+            (alpha * data$x2 - beta) *  (alpha * data$x1 - beta)^2/2
+    data$ineq1 <- data$ineq1 + (alpha * data$x2 - beta) * data$cond.prob[, 1] - 
+            (alpha * data$x1 - beta) *  (alpha * data$x2 - beta)^2/2
     
-    A1 <- cbind(alpha * X - beta, 
-                alpha * X, 
-                -(alpha * X - beta), 
-                -alpha * X)
+    data$ineq2 <- alpha * data$x1 * data$cond.prob[, 2] -
+            (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta) ^2/2 - 
+                (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2
+    data$ineq2 <- data$ineq2 + alpha * data$x2 * data$cond.prob[, 3] -
+            (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta) ^2/2 - 
+                (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2
     
-    A1 <- t(matrix(t(A1), nrow = 2)) # 4000 by 2, each market has 4 consecutive rows, each column is for a firm
+    data$ineq3 <- -(alpha * data$x1 - beta) * data$cond.prob[, 3] + 
+            alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
+                (alpha * data$x2 - beta) * (2 * alpha * data$x1 - beta) * beta/2
+    data$ineq3 <- data$ineq3 - (alpha * data$x2 - beta) * data$cond.prob[, 2] + 
+            alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
+                (alpha * data$x1 - beta) * (2 * alpha * data$x2 - beta) * beta/2
     
-    X.rev <- cbind(X[, 2], X[, 1]) # reverse the firms' order in columns
+    data$ineq4 <- -alpha * data$x1 * data$cond.prob[, 4] + 
+            (1 - alpha * data$x2) * (1 - (alpha * data$x1)^2)/2
+    data$ineq4 <- data$ineq4 - alpha * data$x2 * data$cond.prob[, 4] + 
+            (1 - alpha * data$x1) * (1 - (alpha * data$x2)^2)/2
     
-    B1 <- cbind(-(alpha * X.rev - beta) * (alpha * X - beta)^2/2, 
-                -(1 - (alpha * X.rev - beta)) * (alpha * X - beta)^2/2 - 
-                        (1 - alpha * X.rev) * (2 * alpha * X - beta) * beta/2, 
-                alpha * X.rev * (1 - (alpha * X)^2)/2 + 
-                        (alpha * X.rev - beta) * (2 * alpha * X - beta) * beta/2, 
-                (1 - alpha * X.rev) * (1 - (alpha * X)^2)/2)
-    B1 <- t(matrix(t(B1), nrow = 2)) # same structure as A1
+    data$ineq5 <- (alpha * data$x1 - beta) * data$cond.prob[, 1] +
+            alpha * data$x1 * data$cond.prob[, 2] + 
+            alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
+                (alpha * data$x2 - beta) *  (2 * alpha * data$x1 - beta) * beta/2 + 
+            (1 + data$x1)/2 * data$cond.prob[, 4] -
+            1/2
+    data$ineq5 <- data$ineq5 + (alpha * data$x2 - beta) * data$cond.prob[, 1] +
+            alpha * data$x2 * data$cond.prob[, 3] + 
+            alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
+                (alpha * data$x1 - beta) *  (2 * alpha * data$x2 - beta) * beta/2 + 
+            (1 + data$x2)/2 * data$cond.prob[, 4] -
+            1/2
     
-    P1 <- cbind(c(data$cond.prob), c(data$cond.prob[, c(1, 3, 2, 4)])) #same structure as A1
+    data$ineq6 <- -(alpha * data$x1 - beta)/2 * data$cond.prob[, 1] - 
+            (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta) ^2/2 - 
+                (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2 -
+            (alpha * data$x1 - beta) * data$cond.prob[, 3] -
+            alpha * data$x1 * data$cond.prob[, 4] + 
+            1/2
+    data$ineq6 <- data$ineq6 - (alpha * data$x2 - beta)/2 * data$cond.prob[, 1] - 
+            (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta) ^2/2 - 
+            (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2 -
+            (alpha * data$x2 - beta) * data$cond.prob[, 2] -
+            alpha * data$x2 * data$cond.prob[, 4] +
+            1/2
     
-    A2 <- rbind(alpha * X - beta, 
-                alpha * X,
-                alpha * X.rev * (1 - (alpha * X)^2)/2 + (alpha * X.rev - beta) * (2 * alpha * X - beta) * beta/2,
-                (1 + alpha * X)/2) 
-    A2 <- matrix(as.matrix(A2), nrow = 1000)
-    A2 <- rbind(A2[, 1 : 4], A2[, 5 : 8]) 
-    # each row is for a firm in a market, and each firm has 1000 consecutive rows
-
-    P2 <- cbind(data$cond.prob[, 1 : 2], 1, data$cond.prob[, 4])
-    P2 <- rbind(P2, P2[, c(1, 3, 2, 4)])
+    IE <- aggregate(cbind(ineq1, ineq2, ineq3, ineq4, ineq5, ineq6) ~ x1.itv + x2.itv, 
+                    data = data, 
+                    FUN = sum)
     
+    sum(pmin(c(as.matrix(IE[, -(1 : 2)])/2000), 0)^2)
     
-    A3 <- rbind(-(alpha * X - beta)/2, 
-                -(1 - (alpha * X.rev - beta)) * (alpha * X - beta)^2/2 - 
-                        (1 - alpha * X.rev) * (2 * alpha * X - beta) * beta/2,
-                -(alpha * X - beta),
-                -alpha * X)
-    A3 <- matrix(as.matrix(A3), nrow = 1000)
-    A3 <- rbind(A3[, 1 : 4], A3[, 5 : 8])
-    
-    P3 <- cbind(data$cond.prob[, 1], 1, data$cond.prob[, 3 : 4])
-    P3 <- rbind(P3, P3[, c(1, 3, 2, 4)])
-    
-    #mean(pmin(c(A1 * P1 - B1, rowSums(A2 * P2) - 1/2, rowSums(A3 * P3) + 1/2), 0)^2)
-    
-    
+            
 }
 
-optim(par = c(1, 1), fn = obj)
+optim(par = c(0, 0), fn = obj)
 
 #graph
 x <- 1 : 100/100
