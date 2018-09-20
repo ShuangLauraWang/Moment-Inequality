@@ -72,66 +72,76 @@ obj <- function(params){
     alpha <- params[1]
     beta <- params[2]
     
-    data$ineq1 <- (alpha * data$x1 - beta) * data$cond.prob[, 1] - 
+    data$ineq <- matrix(0, nrow(data), 6)
+    
+    data$ineq[, 1] <- (alpha * data$x1 - beta) * data$cond.prob[, 1] - 
             (alpha * data$x2 - beta) *  (alpha * data$x1 - beta)^2/2
-    data$ineq1 <- data$ineq1 + (alpha * data$x2 - beta) * data$cond.prob[, 1] - 
+    data$ineq[, 1] <- data$ineq[, 1] + (alpha * data$x2 - beta) * data$cond.prob[, 1] - 
             (alpha * data$x1 - beta) *  (alpha * data$x2 - beta)^2/2
     
-    data$ineq2 <- alpha * data$x1 * data$cond.prob[, 2] -
+    data$ineq[, 2] <- alpha * data$x1 * data$cond.prob[, 2] -
             (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta) ^2/2 - 
                 (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2
-    data$ineq2 <- data$ineq2 + alpha * data$x2 * data$cond.prob[, 3] -
+    data$ineq[, 2] <- data$ineq[, 2] + alpha * data$x2 * data$cond.prob[, 3] -
             (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta) ^2/2 - 
                 (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2
     
-    data$ineq3 <- -(alpha * data$x1 - beta) * data$cond.prob[, 3] + 
+    data$ineq[, 3] <- -(alpha * data$x1 - beta) * data$cond.prob[, 3] + 
             alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
                 (alpha * data$x2 - beta) * (2 * alpha * data$x1 - beta) * beta/2
-    data$ineq3 <- data$ineq3 - (alpha * data$x2 - beta) * data$cond.prob[, 2] + 
+    data$ineq[, 3] <- data$ineq[, 3] - (alpha * data$x2 - beta) * data$cond.prob[, 2] + 
             alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
                 (alpha * data$x1 - beta) * (2 * alpha * data$x2 - beta) * beta/2
     
-    data$ineq4 <- -alpha * data$x1 * data$cond.prob[, 4] + 
+    data$ineq[, 4] <- -alpha * data$x1 * data$cond.prob[, 4] + 
             (1 - alpha * data$x2) * (1 - (alpha * data$x1)^2)/2
-    data$ineq4 <- data$ineq4 - alpha * data$x2 * data$cond.prob[, 4] + 
+    data$ineq[, 4] <- data$ineq[, 4] - alpha * data$x2 * data$cond.prob[, 4] + 
             (1 - alpha * data$x1) * (1 - (alpha * data$x2)^2)/2
     
-    data$ineq5 <- (alpha * data$x1 - beta) * data$cond.prob[, 1] +
+    data$ineq[, 5] <- (alpha * data$x1 - beta) * data$cond.prob[, 1] +
             alpha * data$x1 * data$cond.prob[, 2] + 
             alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
                 (alpha * data$x2 - beta) *  (2 * alpha * data$x1 - beta) * beta/2 + 
             (1 + data$x1)/2 * data$cond.prob[, 4] -
             1/2
-    data$ineq5 <- data$ineq5 + (alpha * data$x2 - beta) * data$cond.prob[, 1] +
+    data$ineq[, 5] <- data$ineq[, 5] + (alpha * data$x2 - beta) * data$cond.prob[, 1] +
             alpha * data$x2 * data$cond.prob[, 3] + 
             alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
                 (alpha * data$x1 - beta) *  (2 * alpha * data$x2 - beta) * beta/2 + 
             (1 + data$x2)/2 * data$cond.prob[, 4] -
             1/2
     
-    data$ineq6 <- -(alpha * data$x1 - beta)/2 * data$cond.prob[, 1] - 
+    data$ineq[, 6] <- -(alpha * data$x1 - beta)/2 * data$cond.prob[, 1] - 
             (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta) ^2/2 - 
                 (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2 -
             (alpha * data$x1 - beta) * data$cond.prob[, 3] -
             alpha * data$x1 * data$cond.prob[, 4] + 
             1/2
-    data$ineq6 <- data$ineq6 - (alpha * data$x2 - beta)/2 * data$cond.prob[, 1] - 
+    data$ineq[, 6] <- data$ineq[, 6] - (alpha * data$x2 - beta)/2 * data$cond.prob[, 1] - 
             (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta) ^2/2 - 
             (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2 -
             (alpha * data$x2 - beta) * data$cond.prob[, 2] -
             alpha * data$x2 * data$cond.prob[, 4] +
             1/2
     
-    IE <- aggregate(cbind(ineq1, ineq2, ineq3, ineq4, ineq5, ineq6) ~ x1.itv + x2.itv, 
-                    data = data, 
-                    FUN = sum)
+    data$ineq <- data$ineq/2
+            
     
-    sum(pmin(c(as.matrix(IE[, -(1 : 2)])/2000), 0)^2)
+    ineq.mean <- aggregate(cbind(mean = ineq) ~ x1.itv + x2.itv, 
+                           data = data, 
+                           FUN = mean)
+    
+    ineq.sd <- aggregate(cbind(sd = ineq) ~ x1.itv + x2.itv, 
+                           data = data, 
+                           FUN = sd)
+ 
+    
+    sum(pmin(c(as.matrix(ineq.mean[, -(1 : 2)]/ineq.sd[, -(1 : 2)])), 0)^2)
     
             
 }
 
-optim(par = c(0, 0), fn = obj)
+optim(par = c(1, 0), fn = obj)
 
 #graph
 x <- 1 : 100/100
