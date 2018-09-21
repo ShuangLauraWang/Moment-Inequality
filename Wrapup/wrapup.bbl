@@ -1,0 +1,83 @@
+\begin{thebibliography}{12}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Andrews et~al.(2004)Andrews, Berry, and Jia]{andrews2004confidence}
+Donald~WK Andrews, Steven Berry, and Panle Jia.
+\newblock Confidence regions for parameters in discrete games with multiple
+  equilibria, with an application to discount chain store location.
+\newblock \emph{manuscript, Yale University}, 2004.
+
+\bibitem[Chernozhukov et~al.(2007)Chernozhukov, Hong, and
+  Tamer]{chernozhukov2007estimation}
+Victor Chernozhukov, Han Hong, and Elie Tamer.
+\newblock Estimation and confidence regions for parameter sets in econometric
+  models.
+\newblock \emph{Econometrica}, 75\penalty0 (5):\penalty0 1243--1284, 2007.
+
+\bibitem[Ciliberto and Tamer(2009)]{ciliberto2009market}
+Federico Ciliberto and Elie Tamer.
+\newblock Market structure and multiple equilibria in airline markets.
+\newblock \emph{Econometrica}, 77\penalty0 (6):\penalty0 1791--1828, 2009.
+
+\bibitem[Cosslett(1983)]{cosslett1983distribution}
+Stephen~R Cosslett.
+\newblock Distribution-free maximum likelihood estimator of the binary choice
+  model.
+\newblock \emph{Econometrica: Journal of the Econometric Society}, pages
+  765--782, 1983.
+
+\bibitem[Eizenberg(2014)]{eizenberg2014upstream}
+Alon Eizenberg.
+\newblock Upstream innovation and product variety in the us home pc market.
+\newblock \emph{The Review of Economic Studies}, 81\penalty0 (3):\penalty0
+  1003--1045, 2014.
+
+\bibitem[Ellickson et~al.(2013)Ellickson, Houghton, and
+  Timmins]{ellickson2013estimating}
+Paul~B Ellickson, Stephanie Houghton, and Christopher Timmins.
+\newblock Estimating network economies in retail chains: a revealed preference
+  approach.
+\newblock \emph{The RAND Journal of Economics}, 44\penalty0 (2):\penalty0
+  169--193, 2013.
+
+\bibitem[Ho and Pakes(2014)]{ho2014hospital}
+Kate Ho and Ariel Pakes.
+\newblock Hospital choices, hospital prices, and financial incentives to
+  physicians.
+\newblock \emph{The American Economic Review}, 104\penalty0 (12):\penalty0
+  3841--3884, 2014.
+
+\bibitem[Ho(2009)]{ho2009insurer}
+Katherine Ho.
+\newblock Insurer-provider networks in the medical care market.
+\newblock \emph{The American Economic Review}, 99\penalty0 (1):\penalty0
+  393--430, 2009.
+
+\bibitem[Ishii(2008)]{ishii2008compatibility}
+Joy Ishii.
+\newblock Compatibility, competition, and investment in network industries: Atm
+  networks in the banking industry.
+\newblock \emph{Standford University WP}, 2008.
+
+\bibitem[Pakes(2010)]{pakes2010alternative}
+Ariel Pakes.
+\newblock Alternative models for moment inequalities.
+\newblock \emph{Econometrica}, 78\penalty0 (6):\penalty0 1783--1822, 2010.
+
+\bibitem[Pakes et~al.(2015)Pakes, Porter, Ho, and Ishii]{pakes2015moment}
+Ariel Pakes, Jack Porter, Kate Ho, and Joy Ishii.
+\newblock Moment inequalities and their application.
+\newblock \emph{Econometrica}, 83\penalty0 (1):\penalty0 315--334, 2015.
+
+\bibitem[Tamer(2003)]{tamer2003incomplete}
+Elie Tamer.
+\newblock Incomplete simultaneous discrete response model with multiple
+  equilibria.
+\newblock \emph{The Review of Economic Studies}, 70\penalty0 (1):\penalty0
+  147--165, 2003.
+
+\end{thebibliography}

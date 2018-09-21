@@ -102,23 +102,23 @@ obj <- function(params){
             alpha * data$x1 * data$cond.prob[, 2] + 
             alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
                 (alpha * data$x2 - beta) *  (2 * alpha * data$x1 - beta) * beta/2 + 
-            (1 + data$x1)/2 * data$cond.prob[, 4] -
+            (1 + alpha * data$x1)/2 * data$cond.prob[, 4] -
             1/2
     data$ineq[, 5] <- data$ineq[, 5] + (alpha * data$x2 - beta) * data$cond.prob[, 1] +
             alpha * data$x2 * data$cond.prob[, 3] + 
             alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
                 (alpha * data$x1 - beta) *  (2 * alpha * data$x2 - beta) * beta/2 + 
-            (1 + data$x2)/2 * data$cond.prob[, 4] -
+            (1 + alpha * data$x2)/2 * data$cond.prob[, 4] -
             1/2
     
     data$ineq[, 6] <- -(alpha * data$x1 - beta)/2 * data$cond.prob[, 1] - 
-            (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta) ^2/2 - 
+            (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta)^2/2 - 
                 (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2 -
             (alpha * data$x1 - beta) * data$cond.prob[, 3] -
             alpha * data$x1 * data$cond.prob[, 4] + 
             1/2
     data$ineq[, 6] <- data$ineq[, 6] - (alpha * data$x2 - beta)/2 * data$cond.prob[, 1] - 
-            (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta) ^2/2 - 
+            (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta)^2/2 - 
             (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2 -
             (alpha * data$x2 - beta) * data$cond.prob[, 2] -
             alpha * data$x2 * data$cond.prob[, 4] +

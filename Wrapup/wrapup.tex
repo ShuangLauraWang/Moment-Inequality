@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[draft]{article}
 
 %% Language and font encodings
 \usepackage[english]{babel}
@@ -14,7 +14,9 @@
 \usepackage{dsfont}
 \usepackage{txfonts}
 \usepackage{graphicx}
+\graphicspath{/Users/Laura_S/OneDrive - Boston University/Research/Moment Inequality/Graph/} 
 \usepackage{bbm}
+\usepackage{cases}
 \usepackage[usenames, dvipsnames]{xcolor}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
@@ -497,15 +499,30 @@ Particularly, Table.\ref{no.of.icb} gives the number of incumbents in each marke
 
 
 \section{Example}
-
+\label{Example}
 
 $$\pi_i = \alpha - \beta y_{-i} - c_i, \quad \mbox{where } c_i \sim U[0,1]$$
+
+There are two categories of inequalities: (1) profit inequalities; (2) unconditional error expectation, i.e. $E[c_i] = \dfrac{1}{2}$.
+
+\subsection{Profit Inequalities}
+
+Given market structure, we 4 inequalities as follows, 
 
 $$\begin{cases}
 E[\alpha - \beta - c_i | y_i = 1, y_{-i} = 1] > 0\\
 E[\alpha - c_i | y_{i} = 1, y_{-i} = 0] > 0 \\
 E[\alpha - \beta  - c_i | y_{i} = 0, y_{-i} = 1] < 0 \\
-E[\alpha - c_i | y_{i} = 0, y_{-i} = 0] < 0
+E[\alpha - c_i | y_{i} = 0, y_{-i} = 0] < 0 \footnote{The expectation is motivated by the fact that econometricians can not observe $c_i$}
+\end{cases}$$
+
+$\Longleftrightarrow$
+
+$$\begin{cases}
+E[y_iy_{-i}(\alpha - \beta - c_i)] > 0\\
+E[y_i(1 - y_{-i})(\alpha - c_i )] > 0 \\
+E[(1 - y_i)y_{-i}(\alpha - \beta  - c_i)] < 0 \\
+E[(1 - y_i)/(1 - y_{-i})(\alpha - c_i )] < 0
 \end{cases}$$
 
 $\Longleftrightarrow$
@@ -522,10 +539,22 @@ where $G_{y_i, y_{-i}} = \{c_i:  Y_i = y_i \ \& \ Y_{-i} = y_{-i}\}$
 
 Taking $E[\alpha  - c_i | y_i = 1, y_{-i} = 0] > 0 \Longleftrightarrow \alpha Prob\{y_i = 1, y_{-i} = 0\} - \int_{G_{1,0}}c_if(c_i)dc_i > 0$ as an example,
 
+
+$$
+\begin{array}{rl}
+&E[y_i(1 - y_{-i})(\alpha  - \beta y_{-i} - c_i)] \\
+=&E\big[E[y_i(1 - y_{-i})(\alpha  - \beta y_{-i} - c_i)| y_i, y_{-i}] \big]\\
+=&E\big[E[(\alpha - c_i)| y_i = 1, y_{-i} = 0] Prob\{ y_i = 1, y_{-i} = 0\} \big]\\
+=&E\big[y_i(1 - y_{-i})E[\alpha - c_i | y_i = 1, y_{-i} = 0] \big]
+\end{array}
+$$
+
+Therefore,
+
 \begin{equation}
  \begin{array}{cl}
      &E[\alpha - c_i | y_i = 1, y_{-i} = 0] > 0\\
-    \Longleftrightarrow&E[\alpha - c_i|y_i = 1, y_{-i} = 0]Prob\{y_i = 1, y_{-i} = 0\} > 0
+    \Longleftrightarrow&E[y_i(1 - y_{-i})(\alpha - c_i )] > 0 
 \end{array}
 \label{cond_to_uncond}
 \end{equation}
@@ -553,32 +582,21 @@ $$
 \end{array}
 $$
 
-Therefore, the system of inequalities can be rewritten as 
+Therefore, denoting $Prob\{Y_i = y_i, Y_{-i} = y_{-i}\}$ as $P^i_{y_i, y_{-i}}$,  the system of inequalities can be rewritten as 
 
 
-$$\begin{cases}
- (\alpha - \beta)P_{11} - (\alpha - \beta)\dfrac{ (\alpha - \beta)^2}{2} > 0\\
- \alpha P_{10} - \{\big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}\}> 0\\
-- (\alpha - \beta)P_{01} + \{\alpha\dfrac{1 - \alpha^2}{2} + (\alpha- \beta)\dfrac{(2\alpha - \beta)\beta}{2} \}> 0\\
-- \alpha P_{00} + (1 - \alpha)\dfrac{1 - \alpha^2}{2} > 0
-\end{cases}$$
+\begin{numcases}{}
+ (\alpha - \beta)P^i_{1,1} - (\alpha - \beta)\dfrac{ (\alpha - \beta)^2}{2} > 0  \label{piy=11}\\
+ \alpha P^i_{1,0} - \{\big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}\}> 0  \label{piy=10}\\
+- (\alpha - \beta)P^i_{0,1} + \{\alpha\dfrac{1 - \alpha^2}{2} + (\alpha- \beta)\dfrac{(2\alpha - \beta)\beta}{2} \}> 0  \label{piy=01}\\
+- \alpha P^i_{0,0} + (1 - \alpha)\dfrac{1 - \alpha^2}{2} > 0 \label{piy=00}
+\end{numcases}
 
 
 
-Observation should be at market level.
+\subsection{Unconditional Error Expectation}
 
-Objective function
-
-$$
-\begin{array}{rcl}
-Q(\theta) & = & ||\big((\alpha - \beta)P_{11} - \dfrac{(\alpha - \beta)^2}{2}(\alpha - \beta))_-|| + \\
-&& \quad ||\big(\alpha P_{10} - \{\big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}\})_-|| + \\
-&& \quad ||\big((\alpha - \beta)P_{0,1} - \{\big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}\})_+|| + \\
-&& \quad ||\big(\alpha P_{0,0} - (1 - \alpha)\dfrac{1 - \alpha^2}{2})_+||
-\end{array}
-$$
-
-\textbf{Trying to incorporate the information that $E[c_i] = \dfrac{1}{2}$}\footnote{Motivation: trying to exclude the case where $\alpha = \beta = 0$. If that is the case, we should observe $P_{00} = 1$ and $P_{11} = P_{10} = P_{01} = 0$. In terms of conditional expectation, it leads to $E[c_i] = E[c_i|y_{i} = 0, y_{-i} = 0]P_{00} + ...= \dfrac{1 + \alpha}{2}P_{00} + ...= \dfrac{1}{2}$, given $\alpha = \beta = 0$, $\dfrac{1}{2}P_{00} = \dfrac{1}{2}$, which would be violated unless $P_{00} = 1$}
+\textbf{We then incorporate the information that $E[c_i] = \dfrac{1}{2}$}\footnote{Motivation: trying to exclude the case where $\alpha = \beta = 0$. If that is the case, we should observe $P_{00} = 1$ and $P_{11} = P_{10} = P_{01} = 0$. In terms of conditional expectation, it leads to $E[c_i] = E[c_i|y_{i} = 0, y_{-i} = 0]P_{00} + ...= \dfrac{1 + \alpha}{2}P_{00} + ...= \dfrac{1}{2}$, given $\alpha = \beta = 0$, $\dfrac{1}{2}P_{00} = \dfrac{1}{2}$, which would be violated unless $P_{00} = 1$}
 
 \begin{equation}
 \begin{array}{rcl}
@@ -638,13 +656,13 @@ Combining Eq.(\ref{y=11}) and Eq.(\ref{y=10}), by Eq.(\ref{Ec_i}), we have
 Substitute the expected entry decisions with the observed probabilities, 
 
 \begin{equation}
-    (\alpha - \beta)P_{11} + P_{01}E[c_i|y_i = 0, y_{-i} = 1] + \alpha P_{10} + P_{00}E[c_i|y_i = 0, y_{-i} = 0] - \dfrac{1}{2} > 0
+    (\alpha - \beta)P^i_{1,1} + P^i_{0,1}E[c_i|y_i = 0, y_{-i} = 1] + \alpha P^i_{1,0} + P^i_{0,0}E[c_i|y_i = 0, y_{-i} = 0] - \dfrac{1}{2} > 0
 \end{equation}
 
-Given that $P_{01}E[c_i|y_i = 0, y_{-i} = 1] < \alpha\dfrac{1 - \alpha^2}{2} + (\alpha- \beta)\dfrac{(2\alpha - \beta)\beta}{2}$ and $E[c_i|y_i = 0, y_{-i} = 0] = \dfrac{1 + \alpha}{2}$,
+Given that $P^i_{0,1}E[c_i|y_i = 0, y_{-i} = 1] < \alpha\dfrac{1 - \alpha^2}{2} + (\alpha- \beta)\dfrac{(2\alpha - \beta)\beta}{2}$ and $E[c_i|y_i = 0, y_{-i} = 0] = \dfrac{1 + \alpha}{2}$,
 
 \begin{equation}
-    (\alpha - \beta)P_{11} + \alpha\dfrac{1 - \alpha^2}{2} + (\alpha- \beta)\dfrac{(2\alpha - \beta)\beta}{2} + \alpha P_{10} + \dfrac{1 + \alpha}{2}P_{00} - \dfrac{1}{2} > 0
+    (\alpha - \beta)P^i_{1,1} + \alpha\dfrac{1 - \alpha^2}{2} + (\alpha- \beta)\dfrac{(2\alpha - \beta)\beta}{2} + \alpha P^i_{1,0} + \dfrac{1 + \alpha}{2}P^i_{0,0} - \dfrac{1}{2} > 0
     \label{y1=1}
 \end{equation}
 
@@ -677,72 +695,61 @@ Combining Eq.(\ref{y=01}) and Eq.(\ref{y=00}),
 Substitute the expected entry decisions with the observed probabilities, 
 
 \begin{equation}
-    (\alpha - \beta)P_{01} + P_{11}E[c_i|y_i = 1, y_{-i} = 1] + \alpha P_{00} + P_{10}E[c_i|y_i = 1, y_{-i} = 0] - \dfrac{1}{2} < 0
+    (\alpha - \beta)P^i_{0,1} + P^i_{1,1}E[c_i|y_i = 1, y_{-i} = 1] + \alpha P^i_{0,0} + P^i_{1,0}E[c_i|y_i = 1, y_{-i} = 0] - \dfrac{1}{2} < 0
     \label{y1=0}
 \end{equation}
 
 Given that $E[c_i|y_i = 1, y_{-i} = 1] = \dfrac{\alpha - \beta}{2}$ and $P_{10}E[c_i|y_i = 1, y_{-i} = 0] < \big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}$, 
 
 \begin{equation}
-    (\alpha - \beta)P_{01} + \dfrac{\alpha - \beta}{2}P_{11} + \alpha P_{00} + \big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2} - \dfrac{1}{2} < 0
+    (\alpha - \beta)P^i_{0,1} + \dfrac{\alpha - \beta}{2}P^i_{1,1} + \alpha P^i_{0,0} + \big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2} - \dfrac{1}{2} < 0
 \end{equation}
 
-{\color{violet}
-\textbf{Information:}
-\begin{enumerate}
-    \item Profit Inequalities
-    \item $E[c_i] = \dfrac{1}{2}$
-    \item $P_{00} = (1 - \alpha)^2$, $P_{11} = (\alpha - \beta)^2$ 
-\end{enumerate}
-}
+Therefore, combining Eq.(\ref{piy=11}) - Eq.(\ref{piy=10}), Eq.(\ref{y1=1}), Eq.(\ref{y1=0}),  average over firms, the objective function is 
 
-{\color{orange}
-\textbf{Questions:}
-\begin{enumerate}
-    \item How to incorporate all inequalities?
-    \item Any information reused?
-    \item How to determine between observed probabilities and predicted ones?
-    \item Conditional (profit inequalities) v.s. unconditional moments ($E[c_i] = \dfrac{1}{2}$)
-\end{enumerate}
-}
+$$
+\begin{array}{rcl}
+Q(\theta) & = & \displaystyle ||\dfrac{1}{2}\sum_i \big((\alpha - \beta)P^i_{1,1} - \dfrac{(\alpha - \beta)^2}{2}(\alpha - \beta) \big)_-|| + \\
+&& \quad \displaystyle ||\dfrac{1}{2}\sum_i \big(\alpha P^i_{1,0} - \{\big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}\} \big)_-|| + \\
+&& \quad \displaystyle ||\dfrac{1}{2}\sum_i \big((\alpha - \beta)P^i_{0,1} - \{\big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} + (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}\} \big)_+|| + \\
+&& \quad \displaystyle ||\dfrac{1}{2}\sum_i \big(\alpha P^i_{0,0} - (1 - \alpha)\dfrac{1 - \alpha^2}{2} \big)_+|| +\\
+&& \quad \displaystyle ||\dfrac{1}{2}\sum_i \big( (\alpha - \beta)P^i_{1, 1} + \alpha\dfrac{1 - \alpha^2}{2} + (\alpha- \beta)\dfrac{(2\alpha - \beta)\beta}{2} + \alpha P^i_{1, 0} + \dfrac{1 + \alpha}{2}P^i_{0, 0} - \dfrac{1}{2} \big)_+|| + \\
+&& \quad \displaystyle ||\dfrac{1}{2}\sum_i \big(  \dfrac{1}{2} - (\alpha - \beta)P^i_{0,1} - \dfrac{\alpha - \beta}{2}P^i_{1,1} - \alpha P^i_{0,0} - \big(1 - (\alpha - \beta)\big)\dfrac{(\alpha - \beta)^2}{2} - (1 - \alpha)\dfrac{(2\alpha - \beta)\beta}{2}   \big)_+|| 
+\end{array}
+$$
 
+
+
+\section{Another Example}
 Consider the case 
 
-$$\pi_i = \alpha x_i - \beta y_{-i} - c_i, \quad \mbox{where } c_i \sim U[0,1]$$
+$$\pi_{i,m} = \alpha x_{i,m} - \beta y_{-i,m} - c_{i,m}, \quad \mbox{where } c_{i,m} \sim U[0,1]$$
 
-\begin{equation}
-    \begin{array}{cl}
-    \displaystyle 
-    & E[\alpha x_i - \beta y_{-i} - c_i | y_i = 1, y_{-i} = 1, x]  > 0  \\
-    \displaystyle \Longleftrightarrow 
-    & E[y_iy_{-i}(\alpha x_i - \beta y_{-i} - c_i )|x]  > 0\\
-    \displaystyle \Longleftrightarrow 
-    & E \Big[y_iy_{-i}E[(\alpha x_i - \beta y_{-i} - c_i )|y_i = 1, y_{-i} = 1, x] \Big|x \Big]  > 0\\
-    \displaystyle \Longleftrightarrow 
-    & E \Big[y_iy_{-i} \big\{(\alpha x_i - \beta) - E[c_i |y_i = 1, y_{-i} = 1, x] \big\} \Big|x \Big]  > 0\\
-    \displaystyle \Longleftrightarrow 
-    & (\alpha x_i - \beta)E[y_iy_{-i}|x] - E[c_i |y_i = 1, y_{-i} = 1, x]E[y_iy_{-i}|x]  > 0\\
-    \displaystyle \Longleftrightarrow & (\alpha x_i - \beta)Prob\{ y_i = 1, y_{-i} = 1 |x \} - \int_0^{\alpha x_{-i} - \beta}\int_0^{\alpha x_{i} - \beta}c_if(c_i,c_{-i})dc_idc_{-i} > 0 \\
-    \displaystyle \Longleftrightarrow 
-    & (\alpha x_i - \beta)P_{11|x} - (\alpha x_{-i} - \beta)\dfrac{(\alpha x_{i} - \beta)^2}{2} > 0
-    \end{array}
-\end{equation}
+%\begin{equation}
+%    \begin{array}{cl}
+%    \displaystyle 
+%    & E[\alpha x_i - \beta y_{-i} - c_i | y_i = 1, y_{-i} = 1, x]  > 0  \\
+%    \displaystyle \Longleftrightarrow 
+%    & E[y_iy_{-i}(\alpha x_i - \beta y_{-i} - c_i )|x]  > 0\\
+%    \displaystyle \Longleftrightarrow 
+%    & E \Big[y_iy_{-i}E[(\alpha x_i - \beta y_{-i} - c_i )|y_i = 1, y_{-i} = 1, x] \Big|x \Big]  > 0\\
+%    \displaystyle \Longleftrightarrow 
+%    & E \Big[y_iy_{-i} \big\{(\alpha x_i - \beta) - E[c_i |y_i = 1, y_{-i} = 1, x] \big\} \Big|x \Big]  > 0\\
+%    \displaystyle \Longleftrightarrow 
+%    & (\alpha x_i - \beta)E[y_iy_{-i}|x] - E[c_i |y_i = 1, y_{-i} = 1, x]E[y_iy_{-i}|x]  > 0\\
+%    \displaystyle \Longleftrightarrow & (\alpha x_i - \beta)Prob\{ y_i = 1, y_{-i} = 1 |x \} - \int_0^{\alpha x_{-i} - \beta}\int_0^{\alpha x_{i} - \beta}c_if(c_i,c_{-i})dc_idc_{-i} > 0 \\
+%    \displaystyle \Longleftrightarrow 
+%    & (\alpha x_i - \beta)P_{11|x} - (\alpha x_{-i} - \beta)\dfrac{(\alpha x_{i} - \beta)^2}{2} > 0
+%    \end{array}
+%\end{equation}
 
-Following a similar process, we will reach to 
-
-$$\begin{cases}
-(\alpha x_1 - \beta)P_{11|x} - (\alpha x_2 - \beta)\dfrac{ (\alpha x_1 - \beta)^2}{2} > 0\\
-\alpha x_1 P_{10|x} - \{\big(1 - (\alpha x_2 - \beta)\big)\dfrac{(\alpha x_1 - \beta)^2}{2} + (1 - \alpha x_2)\dfrac{(2\alpha x_1 - \beta)\beta}{2}\} > 0\\
-- (\alpha x_1- \beta)P_{01|x} + \{\alpha x_2\dfrac{1 - (\alpha x_1)^2}{2} + (\alpha x_2- \beta)\dfrac{(2\alpha x_1 - \beta)\beta}{2} \}  > 0\\
-- \alpha x_1 P_{00|x} + (1 - \alpha x_2)\dfrac{1 - (\alpha x_1)^2}{2}> 0
-\end{cases}$$
-
+Following a similar process to Section \ref{Example}, we will reach to 
 
 $$\begin{cases}
-(\alpha x_2 - \beta)P_{11|x} - (\alpha x_1 - \beta)\dfrac{ (\alpha x_2 - \beta)^2}{2} > 0\\
-- (\alpha x_2- \beta)P_{10|x} + \{\alpha x_2\dfrac{1 - (\alpha x_2)^2}{2} + (\alpha x_1- \beta)\dfrac{(2\alpha x_2 - \beta)\beta}{2} \} > 0\\
- \alpha x_2 P_{01|x} - \{\big(1 - (\alpha x_1 - \beta)\big)\dfrac{(\alpha x_2 - \beta)^2}{2} + (1 - \alpha x_1)\dfrac{(2\alpha x_2 - \beta)\beta}{2}\} > 0\\
-- \alpha x_2 P_{00|x} + (1 - \alpha x_1)\dfrac{1 - (\alpha x_2)^2}{2} > 0
+(\alpha x_{i,m} - \beta)P^i_{1, 1|x} - (\alpha x_{-i,m} - \beta)\dfrac{ (\alpha x_{i,m} - \beta)^2}{2} > 0\\
+\alpha x_{i,m} P^i_{1, 0|x} - \{\big(1 - (\alpha x_{-i,m} - \beta)\big)\dfrac{(\alpha x_{i} - \beta)^2}{2} + (1 - \alpha x_{-i,m})\dfrac{(2\alpha x_{i,m} - \beta)\beta}{2}\} > 0\\
+- (\alpha x_{i,m}- \beta)P^i_{0, 1|x} + \{\alpha x_{-i,m}\dfrac{1 - (\alpha x_{i,m})^2}{2} + (\alpha x_{-i,m}- \beta)\dfrac{(2\alpha x_{i,m} - \beta)\beta}{2} \}  > 0\\
+- \alpha x_{i,m} P^i_{0, 0|x} + (1 - \alpha x_{-i,m})\dfrac{1 - (\alpha x_{i})^2}{2}> 0
 \end{cases}$$
 
 And the counterpart for Eq.(\ref{y1=1}) 7 Eq.(\ref{y1=0}) is 
@@ -750,13 +757,41 @@ And the counterpart for Eq.(\ref{y1=1}) 7 Eq.(\ref{y1=0}) is
 
 \begin{equation}
     \begin{array}{rl}
-         (\alpha x_1 - \beta)P_{11|x} + \alpha x_2\dfrac{1 - (\alpha x_1)^2}{2} + (\alpha x_2 - \beta)\dfrac{(2\alpha x_1 - \beta)\beta}{2} + \alpha x_1 P_{10|x} + \dfrac{1 + \alpha x_1}{2}P_{00|x} - \dfrac{1}{2} & > 0  \\
-         (\alpha x_1 - \beta)P_{01|x} + \dfrac{\alpha x_1 - \beta}{2}P_{11|x} + \alpha x_1 P_{00|x} + \big(1 - (\alpha x_2 - \beta)\big)\dfrac{(\alpha x_1 - \beta)^2}{2} + (1 - \alpha x_2)\dfrac{(2\alpha x_1 - \beta)\beta}{2} - \dfrac{1}{2} & < 0
+         (\alpha x_{i,m} - \beta)P^i_{1, 1|x} + \alpha x_{-i,m}\dfrac{1 - (\alpha x_{i,m})^2}{2} + (\alpha x_{-i,m} - \beta)\dfrac{(2\alpha x_{i,m} - \beta)\beta}{2} + \alpha x_{i,m} P^i_{10|x} + \dfrac{1 + \alpha x_{i,m}}{2}P^i_{00|x} - \dfrac{1}{2} & > 0  \\
+          \dfrac{1}{2} - (\alpha x^i_1 - \beta)P^i_{0, 1|x} - \dfrac{\alpha x_{i,m} - \beta}{2}P^i_{1, 1|x} - \alpha x_{i,m} P^i_{0, 0|x} - \big(1 - (\alpha x_{-i,m} - \beta)\big)\dfrac{(\alpha x_{i,m} - \beta)^2}{2} - (1 - \alpha x_{-i,m})\dfrac{(2\alpha x_{i,m} - \beta)\beta}{2}  & > 0
     \end{array}
 \end{equation}
 
+
+$$
+\begin{array}{rcl}
+Q(\theta) & = & \displaystyle ||\dfrac{1}{2M}\sum_m\sum_{i,m} \big((\alpha x_{i,m} - \beta)P^i_{1,1|x} - \dfrac{(\alpha_{i,m} - \beta)^2}{2}(\alpha_{-i,m} - \beta) \big)_-|| + \\
+&& \quad \displaystyle ||\dfrac{1}{2M}\sum_m\sum_{i,m} \big(\alpha x_{i,m} P^i_{1,0|x} - \{\big(1 - (\alpha x_{-i,m}- \beta)\big)\dfrac{(\alpha x_{i,m} - \beta)^2}{2} + (1 - \alpha x_{-i,m})\dfrac{(2\alpha x_{i} - \beta)\beta}{2}\} \big)_-|| + \\
+&& \quad \displaystyle ||\dfrac{1}{2M}\sum_m\sum_{i,m} \big((\alpha x_{i,m}- \beta)P^i_{0,1|x} - \{\big(1 - (\alpha x_{-i,m} - \beta)\big)\dfrac{(\alpha x_{i,m} - \beta)^2}{2} + (1 - \alpha x_{-i,m})\dfrac{(2\alpha x_{i,m} - \beta)\beta}{2}\} \big)_+|| + \\
+&& \quad \displaystyle ||\dfrac{1}{2M}\sum_m\sum_{i,m} \big(\alpha x_{i,m} P^i_{0,0|x} - (1 - \alpha x_{-i,m})\dfrac{1 - (\alpha x_{i,m})^2}{2} \big)_+|| +\\
+&& \quad \displaystyle ||\dfrac{1}{2M}\sum_m\sum_{i,m} \big( (\alpha x_{i,m}- \beta)P^i_{1, 1|x} + \alpha x_{i,m} \dfrac{1 - (\alpha x_{-i,m})^2}{2} + (\alpha x_{-i,m}- \beta)\dfrac{(2\alpha x_{i,m} - \beta)\beta}{2} + \alpha x_{i,m} P^i_{1, 0|x} + \dfrac{1 + \alpha x_{i,m}}{2}P^i_{0, 0|x} - \dfrac{1}{2} \big)_+|| + \\
+&& \quad \displaystyle ||\dfrac{1}{2M}\sum_m \sum_{i,m} \big( (\alpha x_{i,m} - \beta)P^i_{0,1|x}  + \dfrac{\alpha x_{i,m} - \beta}{2}P^i_{1,1|x} + \alpha x_{i,m} P^i_{0,0|x} + \big(1 - (\alpha x_{-i,m} - \beta)\big)\dfrac{(\alpha x_{i,m} - \beta)^2}{2} + (1 - \alpha x_{-i,m})\dfrac{(2\alpha x_{i,m} - \beta)\beta}{2}  - \dfrac{1}{2} \big)_- || 
+\end{array}
+$$
+
+%{\color{violet}
+%\textbf{Information:}
+%\begin{enumerate}
+%    \item Profit Inequalities
+%    \item $E[c_i] = \dfrac{1}{2}$
+%    \item $P_{00} = (1 - \alpha)^2$, $P_{11} = (\alpha - \beta)^2$ 
+%\end{enumerate}
+%}
+%{\color{orange}
+%\textbf{Questions:}
+%\begin{enumerate}
+%    \item Any information reused?
+%    \item How to determine between observed probabilities and predicted ones?
+%\end{enumerate}
+%}
+
 \bibliographystyle{plainnat}
-\bibliography{sample}
+\bibliography{References}
 
 \end{document}
 
