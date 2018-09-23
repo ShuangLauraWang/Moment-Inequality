@@ -29,27 +29,28 @@ data <- data.frame(mktid = seq(from = 1, to = M, by = 1),
 eq <- matrix(0, M, 2^2)
 k <- 1
 
-for(j in 0 : (N - 1)){
-        for(i in 0 : (N - 1)){
-                eq[ , k] <- (-1)^i * (alpha - beta * j - cost[, 1]) < 0 & 
-                    (-1)^j * (alpha - beta * i - cost[, 2]) < 0
+
+for(i in 0 : (N - 1)){
+        for(j in 0 : (N - 1)){
+                eq[ , k] <- (-1)^i * (alpha - beta * (1 - j) - cost[, 1]) > 0 &
+                        (-1)^j * (alpha - beta * (1 - i) - cost[, 2]) > 0
                 k <- k + 1
         }
 }
 
-which.eq <- sapply(apply(eq == 1, 1, which), function(x){x[sample(length(x), size = 1)]})
+data$eq <- sapply(apply(eq == 1, 1, which), function(x){x[sample(length(x), size = 1)]})
 
-#different numbers indicate different eqs: 1 --> (0, 0), 2 --> (1, 0), 3 --> (0, 1), 4 --> (1, 1)
+#different numbers indicate different eqs: 1 --> (1, 1), 2 --> (1, 0), 3 --> (0, 1), 4 --> (0, 0)
+
 
 y <- matrix(0, nrow = M, ncol = N)
-y[ , 2] <- which.eq >= 3
-y[ , 1] <- which.eq == 2 | which.eq == 4
+data$y1 <- data$eq <= 2
+data$y2 <- data$eq == 1 | data$eq == 3
 
-P00 <- sum(which.eq == 1)/M
-P10 <- sum(which.eq == 2)/M
-P01 <- sum(which.eq == 3)/M
-P11 <- sum(which.eq == 4)/M
-
+P11 <- sum(data$eq == 1)/M
+P10 <- sum(data$eq == 2)/M
+P01 <- sum(data$eq == 3)/M
+P00 <- sum(data$eq == 4)/M
 
 
 # Estimation --------------------------------------------------------------
