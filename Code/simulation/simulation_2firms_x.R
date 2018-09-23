@@ -43,7 +43,6 @@ data$eq <- sapply(apply(eq == 1, 1, which), function(x){x[sample(length(x), size
 
 #different numbers indicate different eqs: 1 --> (1, 1), 2 --> (1, 0), 3 --> (0, 1), 4 --> (0, 0)
 
-y <- matrix(0, nrow = M, ncol = N)
 data$y1 <- data$eq <= 2
 data$y2 <- data$eq == 1 | data$eq == 3
 
@@ -67,70 +66,77 @@ data <- merge(data, cond.prob.df, by.x = c("x1.itv", "x2.itv"))
 
 data <- data[order(data$mktid), ]
 
+ineq <- matrix(0, nrow(data), 6)
+
+ineq.fn <- function(params){
+        
+        ineq[, 1] <- (alpha * data$x1 - beta) * data$cond.prob[, 1] - 
+                (alpha * data$x2 - beta) *  (alpha * data$x1 - beta)^2/2
+        ineq[, 1] <- ineq[, 1] + (alpha * data$x2 - beta) * data$cond.prob[, 1] - 
+                (alpha * data$x1 - beta) *  (alpha * data$x2 - beta)^2/2
+        
+        ineq[, 2] <- alpha * data$x1 * data$cond.prob[, 2] - 
+                (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta) ^2/2 - 
+                (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2
+        ineq[, 2] <- ineq[, 2] + alpha * data$x2 * data$cond.prob[, 3] -
+                (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta) ^2/2 - 
+                (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2
+        
+        ineq[, 3] <- -(alpha * data$x1 - beta) * data$cond.prob[, 3] + 
+                alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
+                (alpha * data$x2 - beta) * (2 * alpha * data$x1 - beta) * beta/2
+        ineq[, 3] <- ineq[, 3] - (alpha * data$x2 - beta) * data$cond.prob[, 2] + 
+                alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
+                (alpha * data$x1 - beta) * (2 * alpha * data$x2 - beta) * beta/2
+        
+        ineq[, 4] <- -alpha * data$x1 * data$cond.prob[, 4] + 
+                (1 - alpha * data$x2) * (1 - (alpha * data$x1)^2)/2
+        ineq[, 4] <- ineq[, 4] - alpha * data$x2 * data$cond.prob[, 4] + 
+                (1 - alpha * data$x1) * (1 - (alpha * data$x2)^2)/2
+        
+        ineq[, 5] <- (alpha * data$x1 - beta) * data$cond.prob[, 1] +
+                alpha * data$x1 * data$cond.prob[, 2] + 
+                alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
+                (alpha * data$x2 - beta) *  (2 * alpha * data$x1 - beta) * beta/2 + 
+                (1 + alpha * data$x1)/2 * data$cond.prob[, 4] -
+                1/2
+        ineq[, 5] <- ineq[, 5] + (alpha * data$x2 - beta) * data$cond.prob[, 1] +
+                alpha * data$x2 * data$cond.prob[, 3] + 
+                alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
+                (alpha * data$x1 - beta) *  (2 * alpha * data$x2 - beta) * beta/2 + 
+                (1 + alpha * data$x2)/2 * data$cond.prob[, 4] -
+                1/2
+        
+        ineq[, 6] <- -(alpha * data$x1 - beta)/2 * data$cond.prob[, 1] - 
+                (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta)^2/2 - 
+                (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2 -
+                (alpha * data$x1 - beta) * data$cond.prob[, 3] -
+                alpha * data$x1 * data$cond.prob[, 4] + 
+                1/2
+        ineq[, 6] <- ineq[, 6] - (alpha * data$x2 - beta)/2 * data$cond.prob[, 1] - 
+                (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta)^2/2 - 
+                (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2 -
+                (alpha * data$x2 - beta) * data$cond.prob[, 2] -
+                alpha * data$x2 * data$cond.prob[, 4] +
+                1/2
+        
+        ineq <- ineq/N
+
+        
+}
+
 obj <- function(params){
     
     alpha <- params[1]
     beta <- params[2]
     
-    data$ineq <- matrix(0, nrow(data), 6)
     
-    data$ineq[, 1] <- (alpha * data$x1 - beta) * data$cond.prob[, 1] - 
-            (alpha * data$x2 - beta) *  (alpha * data$x1 - beta)^2/2
-    data$ineq[, 1] <- data$ineq[, 1] + (alpha * data$x2 - beta) * data$cond.prob[, 1] - 
-            (alpha * data$x1 - beta) *  (alpha * data$x2 - beta)^2/2
-    
-    data$ineq[, 2] <- alpha * data$x1 * data$cond.prob[, 2] -
-            (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta) ^2/2 - 
-                (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2
-    data$ineq[, 2] <- data$ineq[, 2] + alpha * data$x2 * data$cond.prob[, 3] -
-            (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta) ^2/2 - 
-                (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2
-    
-    data$ineq[, 3] <- -(alpha * data$x1 - beta) * data$cond.prob[, 3] + 
-            alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
-                (alpha * data$x2 - beta) * (2 * alpha * data$x1 - beta) * beta/2
-    data$ineq[, 3] <- data$ineq[, 3] - (alpha * data$x2 - beta) * data$cond.prob[, 2] + 
-            alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
-                (alpha * data$x1 - beta) * (2 * alpha * data$x2 - beta) * beta/2
-    
-    data$ineq[, 4] <- -alpha * data$x1 * data$cond.prob[, 4] + 
-            (1 - alpha * data$x2) * (1 - (alpha * data$x1)^2)/2
-    data$ineq[, 4] <- data$ineq[, 4] - alpha * data$x2 * data$cond.prob[, 4] + 
-            (1 - alpha * data$x1) * (1 - (alpha * data$x2)^2)/2
-    
-    data$ineq[, 5] <- (alpha * data$x1 - beta) * data$cond.prob[, 1] +
-            alpha * data$x1 * data$cond.prob[, 2] + 
-            alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
-                (alpha * data$x2 - beta) *  (2 * alpha * data$x1 - beta) * beta/2 + 
-            (1 + alpha * data$x1)/2 * data$cond.prob[, 4] -
-            1/2
-    data$ineq[, 5] <- data$ineq[, 5] + (alpha * data$x2 - beta) * data$cond.prob[, 1] +
-            alpha * data$x2 * data$cond.prob[, 3] + 
-            alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
-                (alpha * data$x1 - beta) *  (2 * alpha * data$x2 - beta) * beta/2 + 
-            (1 + alpha * data$x2)/2 * data$cond.prob[, 4] -
-            1/2
-    
-    data$ineq[, 6] <- -(alpha * data$x1 - beta)/2 * data$cond.prob[, 1] - 
-            (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta)^2/2 - 
-                (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2 -
-            (alpha * data$x1 - beta) * data$cond.prob[, 3] -
-            alpha * data$x1 * data$cond.prob[, 4] + 
-            1/2
-    data$ineq[, 6] <- data$ineq[, 6] - (alpha * data$x2 - beta)/2 * data$cond.prob[, 1] - 
-            (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta)^2/2 - 
-            (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2 -
-            (alpha * data$x2 - beta) * data$cond.prob[, 2] -
-            alpha * data$x2 * data$cond.prob[, 4] +
-            1/2
-    
-    data$ineq <- data$ineq/2
-            
+    data$ineq <- ineq.fn(params)
     
     ineq.mean <- aggregate(cbind(mean = ineq) ~ x1.itv + x2.itv, 
                            data = data, 
                            FUN = mean)
-    
+     
     ineq.sd <- aggregate(cbind(sd = ineq) ~ x1.itv + x2.itv, 
                            data = data, 
                            FUN = sd)
@@ -143,6 +149,67 @@ obj <- function(params){
 
 optim(par = c(1, 0), fn = obj)
 
+
+
+# Confidence Sets for True Parameters -------------------------------------
+
+## Step 1: define a grid that will contain the confidence set
+## 
+
+hin <- function(params){
+        
+        data$ineq <- ineq.fn(params)
+        
+        ineq.mean <- aggregate(cbind(mean = ineq) ~ x1.itv + x2.itv, 
+                               data = data, 
+                               FUN = mean,
+                               simplify = T)
+        
+        ineq.weight <- aggregate(cbind(mean = ineq) ~ x1.itv + x2.itv, 
+                                 data = data, 
+                                 FUN = length)
+        
+        h <- c(as.matrix(ineq.mean[, -(1 : 2)] + 
+                                 log(2 * ineq.weight[, -(1 : 2)])))
+        #h <- c(h, params[1], params[2], 1 - params[1], 1 - params[2])
+        
+}
+
+grid.bound <- function(){
+        #output: a matrix, nrow = no. of parameters, ncol = 2, 1st column are 
+        #upper bounds, 2nd column are lower bounds
+        
+        J <- 2
+        
+        D <- matrix(0, ncol = J, nrow = 2^J)
+        D[seq(1, length(D), by = 2^J + 2)] <- 1
+        D[seq(2, length(D), by = 2^J + 2)] <- -1
+        
+        bound <- apply(D, 1, 
+                       FUN = function(x){
+                               temp <- auglag(par = c(0, 0), 
+                                              fn = function(params){x %*% params}, 
+                                              hin = hin, 
+                                              control.outer = list(trace = F))$par
+                               }
+                       )
+        
+        cbind(bound[seq(1, length(bound), by = 2^J + 1)], 
+              bound[seq(J + 1, length(bound), by = 2^J + 1)])
+        
+}
+
+grid.bound()
+
+
+## Step 2: choose a point theta. With theta, we test the null hypothesis that the vecotr theta equals the true value of theta
+
+## Step 3: evaluate the MMM test statistics at theta:
+
+
+
+
+## 
 #graph
 x <- 1 : 100/100
 y <- 1 : 100/100
