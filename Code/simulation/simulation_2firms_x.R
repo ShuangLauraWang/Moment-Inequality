@@ -124,7 +124,7 @@ ineq.fn <- function(params){
                 alpha * data$x2 * data$cond.prob[, 4] +
                 1/2
         
-        ineq <- ineq/2
+        ineq/2
         
 }
 
