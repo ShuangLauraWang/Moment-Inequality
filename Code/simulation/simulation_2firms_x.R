@@ -70,6 +70,9 @@ ineq <- matrix(0, nrow(data), 6)
 
 ineq.fn <- function(params){
         
+        alpha <- params[1]
+        beta <- params[2]
+        
         ineq[, 1] <- (alpha * data$x1 - beta) * data$cond.prob[, 1] - 
                 (alpha * data$x2 - beta) *  (alpha * data$x1 - beta)^2/2
         ineq[, 1] <- ineq[, 1] + (alpha * data$x2 - beta) * data$cond.prob[, 1] - 
@@ -120,17 +123,13 @@ ineq.fn <- function(params){
                 alpha * data$x2 * data$cond.prob[, 4] +
                 1/2
         
-        ineq <- ineq/N
+        ineq/N
 
         
 }
 
 obj <- function(params){
-    
-    alpha <- params[1]
-    beta <- params[2]
-    
-    
+
     data$ineq <- ineq.fn(params)
     
     ineq.mean <- aggregate(cbind(mean = ineq) ~ x1.itv + x2.itv, 
@@ -147,7 +146,7 @@ obj <- function(params){
             
 }
 
-optim(par = c(0, 0), fn = obj)
+optim(par = c(1, 0), fn = obj)
 
 
 
@@ -206,9 +205,10 @@ grid.bound()
 
 ## Step 3: evaluate the MMM test statistics at theta:
 
-alpha_p <- 1 : 10/10
-beta_p <- 1 : 10/10
-theta_p <- apply(cbind(rep(alpha_p, each = 10), rep(beta_p, times = 10)), 1, FUN = obj)
+P <- 100
+alpha_p <- 1 : P/P
+beta_p <- 1 : P/P
+theta_p <- apply(cbind(rep(alpha_p, each = P), rep(beta_p, times = P)), 1, FUN = obj)
 
 
 ## 
