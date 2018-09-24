@@ -66,12 +66,13 @@ data <- merge(data, cond.prob.df, by.x = c("x1.itv", "x2.itv"))
 
 data <- data[order(data$mktid), ]
 
-ineq <- matrix(0, nrow(data), 6)
 
 ineq.fn <- function(params){
         
         alpha <- params[1]
         beta <- params[2]
+        
+        ineq <- matrix(0, nrow(data), 6)
         
         ineq[, 1] <- (alpha * data$x1 - beta) * data$cond.prob[, 1] - 
                 (alpha * data$x2 - beta) *  (alpha * data$x1 - beta)^2/2
@@ -123,8 +124,7 @@ ineq.fn <- function(params){
                 alpha * data$x2 * data$cond.prob[, 4] +
                 1/2
         
-        ineq/N
-
+        ineq <- ineq/2
         
 }
 
