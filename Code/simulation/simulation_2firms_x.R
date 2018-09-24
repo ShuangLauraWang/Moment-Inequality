@@ -147,7 +147,7 @@ obj <- function(params){
             
 }
 
-optim(par = c(1, 0), fn = obj)
+optim(par = c(0, 0), fn = obj)
 
 
 
@@ -206,7 +206,9 @@ grid.bound()
 
 ## Step 3: evaluate the MMM test statistics at theta:
 
-
+alpha_p <- 1 : 10/10
+beta_p <- 1 : 10/10
+theta_p <- apply(cbind(rep(alpha_p, each = 10), rep(beta_p, times = 10)), 1, FUN = obj)
 
 
 ## 
