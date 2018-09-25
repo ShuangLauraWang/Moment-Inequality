@@ -123,9 +123,7 @@ ineq.fn <- function(params){
                 (alpha * data$x2 - beta) * data$cond.prob[, 2] -
                 alpha * data$x2 * data$cond.prob[, 4] +
                 1/2
-        
-        ineq/2
-        
+        ineq
 }
 
 obj <- function(params){
@@ -198,7 +196,7 @@ grid.bound <- function(){
         
 }
 
-grid.bound()
+bounds <- grid.bound()
 
 
 ## Step 2: choose a point theta. With theta, we test the null hypothesis that the vecotr theta equals the true value of theta
@@ -206,10 +204,17 @@ grid.bound()
 ## Step 3: evaluate the MMM test statistics at theta:
 
 P <- 100
-alpha_p <- 1 : P/P
-beta_p <- 1 : P/P
+alpha_p <- seq(from = bounds[1 ,1], to = bounds[1, 2], length.out = 100)
+beta_p <- seq(from = bounds[2 ,1], to = bounds[2, 2], length.out = 100)
 theta_p <- apply(cbind(rep(alpha_p, each = P), rep(beta_p, times = P)), 1, FUN = obj)
 
+
+## Step 4: compute the correlation matrix of the moments evaluated at theta_p
+
+cor.matrix <- function(params){
+        
+        data$ineq <- ineq.fn(params)
+}
 
 ## 
 #graph
