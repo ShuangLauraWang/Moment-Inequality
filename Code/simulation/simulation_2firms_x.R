@@ -62,18 +62,23 @@ cond.prob.df <- aggregate(eq ~ x1.itv + x2.itv, data = data,
 
 colnames(cond.prob.df)[colnames(cond.prob.df) == "eq"] <- "cond.prob"
 
+cond.prob.df$bin <- 1 : nrow(cond.prob.df)
 data <- merge(data, cond.prob.df, by.x = c("x1.itv", "x2.itv"))
 
-firm1 <- data[, c("mktid", "x1", "cost1", "eq", "y1", "cond.prob","x1.itv")]
-firm2 <- data[, c("mktid", "x2", "cost2", "eq", "y2", "cond.prob","x2.itv")]
+firm1 <- data[, c("mktid", "x1", "cost1", "eq", "y1", "cond.prob","x1.itv", "bin")]
+firm2 <- data[, c("mktid", "x2", "cost2", "eq", "y2", "cond.prob","x2.itv", "bin")]
 firm2$cond.prob <- firm2$cond.prob[, c(1, 3, 2, 4)]
-colnames(firm1) <- c("mktid", "x", "cost", "eq", "y", "cond.prob","x.itv")
-colnames(firm2) <- c("mktid", "x", "cost", "eq", "y", "cond.prob","x.itv")
+colnames(firm1) <- c("mktid", "xi", "cost", "eq", "y", "cond.prob","x.itv", "bin")
+colnames(firm2) <- c("mktid", "xi", "cost", "eq", "y", "cond.prob","x.itv", "bin")
+
 firm1$firmid <- 1
 firm2$firmid <- 2
 
 data <- rbind(firm1, firm2)
 data <- data[order(data$mktid), ]
+
+temp <- matrix(data$xi, nrow = 2) 
+data$xj <- c(temp[c(2, 1), ])
 
 ineq.fn <- function(params){
         
@@ -82,54 +87,33 @@ ineq.fn <- function(params){
         
         ineq <- matrix(0, nrow(data), 6)
         
-        ineq[, 1] <- (alpha * data$x1 - beta) * data$cond.prob[, 1] - 
-                (alpha * data$x2 - beta) *  (alpha * data$x1 - beta)^2/2
-        ineq[, 1] <- ineq[, 1] + (alpha * data$x2 - beta) * data$cond.prob[, 1] - 
-                (alpha * data$x1 - beta) *  (alpha * data$x2 - beta)^2/2
+        ineq[, 1] <- (alpha * data$xi - beta) * data$cond.prob[, 1] - 
+                (alpha * data$xj - beta) *  (alpha * data$xi - beta)^2/2
         
-        ineq[, 2] <- alpha * data$x1 * data$cond.prob[, 2] - 
-                (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta) ^2/2 - 
-                (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2
-        ineq[, 2] <- ineq[, 2] + alpha * data$x2 * data$cond.prob[, 3] -
-                (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta) ^2/2 - 
-                (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2
+        ineq[, 2] <- alpha * data$xi * data$cond.prob[, 2] - 
+                (1 - (alpha * data$xj - beta)) *  (alpha * data$xi - beta) ^2/2 - 
+                (1 - alpha * data$xj) * (2 * alpha * data$xi - beta) * beta/2
         
-        ineq[, 3] <- -(alpha * data$x1 - beta) * data$cond.prob[, 3] + 
-                alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
-                (alpha * data$x2 - beta) * (2 * alpha * data$x1 - beta) * beta/2
-        ineq[, 3] <- ineq[, 3] - (alpha * data$x2 - beta) * data$cond.prob[, 2] + 
-                alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
-                (alpha * data$x1 - beta) * (2 * alpha * data$x2 - beta) * beta/2
+        ineq[, 3] <- -(alpha * data$xi - beta) * data$cond.prob[, 3] + 
+                alpha * data$xj * (1 - (alpha * data$xi)^2)/2 + 
+                (alpha * data$xj - beta) * (2 * alpha * data$xi - beta) * beta/2
+
+        ineq[, 4] <- -alpha * data$xi * data$cond.prob[, 4] + 
+                (1 - alpha * data$xj) * (1 - (alpha * data$xi)^2)/2
+
         
-        ineq[, 4] <- -alpha * data$x1 * data$cond.prob[, 4] + 
-                (1 - alpha * data$x2) * (1 - (alpha * data$x1)^2)/2
-        ineq[, 4] <- ineq[, 4] - alpha * data$x2 * data$cond.prob[, 4] + 
-                (1 - alpha * data$x1) * (1 - (alpha * data$x2)^2)/2
-        
-        ineq[, 5] <- (alpha * data$x1 - beta) * data$cond.prob[, 1] +
-                alpha * data$x1 * data$cond.prob[, 2] + 
-                alpha * data$x2 * (1 - (alpha * data$x1)^2)/2 + 
-                (alpha * data$x2 - beta) *  (2 * alpha * data$x1 - beta) * beta/2 + 
-                (1 + alpha * data$x1)/2 * data$cond.prob[, 4] -
+        ineq[, 5] <- (alpha * data$xi - beta) * data$cond.prob[, 1] +
+                alpha * data$xi * data$cond.prob[, 2] + 
+                alpha * data$xj * (1 - (alpha * data$xi)^2)/2 + 
+                (alpha * data$xj - beta) *  (2 * alpha * data$xi - beta) * beta/2 + 
+                (1 + alpha * data$xi)/2 * data$cond.prob[, 4] -
                 1/2
-        ineq[, 5] <- ineq[, 5] + (alpha * data$x2 - beta) * data$cond.prob[, 1] +
-                alpha * data$x2 * data$cond.prob[, 3] + 
-                alpha * data$x1 * (1 - (alpha * data$x2)^2)/2 + 
-                (alpha * data$x1 - beta) *  (2 * alpha * data$x2 - beta) * beta/2 + 
-                (1 + alpha * data$x2)/2 * data$cond.prob[, 4] -
-                1/2
-        
-        ineq[, 6] <- -(alpha * data$x1 - beta)/2 * data$cond.prob[, 1] - 
-                (1 - (alpha * data$x2 - beta)) *  (alpha * data$x1 - beta)^2/2 - 
-                (1 - alpha * data$x2) * (2 * alpha * data$x1 - beta) * beta/2 -
-                (alpha * data$x1 - beta) * data$cond.prob[, 3] -
-                alpha * data$x1 * data$cond.prob[, 4] + 
-                1/2
-        ineq[, 6] <- ineq[, 6] - (alpha * data$x2 - beta)/2 * data$cond.prob[, 1] - 
-                (1 - (alpha * data$x1 - beta)) *  (alpha * data$x2 - beta)^2/2 - 
-                (1 - alpha * data$x1) * (2 * alpha * data$x2 - beta) * beta/2 -
-                (alpha * data$x2 - beta) * data$cond.prob[, 2] -
-                alpha * data$x2 * data$cond.prob[, 4] +
+
+        ineq[, 6] <- -(alpha * data$xi - beta)/2 * data$cond.prob[, 1] - 
+                (1 - (alpha * data$xj - beta)) *  (alpha * data$xi - beta)^2/2 - 
+                (1 - alpha * data$xj) * (2 * alpha * data$xi - beta) * beta/2 -
+                (alpha * data$xi - beta) * data$cond.prob[, 3] -
+                alpha * data$xi * data$cond.prob[, 4] + 
                 1/2
         
         ineq/2
@@ -140,11 +124,11 @@ obj <- function(params){
 
     data$ineq <- ineq.fn(params)
     
-    ineq.mean <- aggregate(cbind(mean = ineq) ~ x1.itv + x2.itv, 
+    ineq.mean <- aggregate(cbind(mean = ineq) ~ bin, 
                            data = data, 
                            FUN = mean)
      
-    ineq.sd <- aggregate(cbind(sd = ineq) ~ x1.itv + x2.itv, 
+    ineq.sd <- aggregate(cbind(sd = ineq) ~ bin, 
                            data = data, 
                            FUN = sd)
  
@@ -161,23 +145,22 @@ optim(par = c(1, 0), fn = obj)
 # Confidence Sets for True Parameters -------------------------------------
 
 ## Step 1: define a grid that will contain the confidence set
-## 
 
 hin <- function(params){
         
         data$ineq <- ineq.fn(params)
         
-        ineq.mean <- aggregate(cbind(mean = ineq) ~ x1.itv + x2.itv, 
+        ineq.mean <- aggregate(cbind(mean = ineq) ~ bin, 
                                data = data, 
                                FUN = mean,
                                simplify = T)
         
-        ineq.weight <- aggregate(cbind(mean = ineq) ~ x1.itv + x2.itv, 
+        ineq.weight <- aggregate(cbind(mean = ineq) ~ bin, 
                                  data = data, 
                                  FUN = length)
         
         h <- c(as.matrix(ineq.mean[, -(1 : 2)] + 
-                                 log(2 * ineq.weight[, -(1 : 2)])))
+                                 log(ineq.weight[, -(1 : 2)])))
         #h <- c(h, params[1], params[2], 1 - params[1], 1 - params[2])
         
 }
@@ -186,11 +169,10 @@ grid.bound <- function(){
         #output: a matrix, nrow = no. of parameters, ncol = 2, 1st column are 
         #upper bounds, 2nd column are lower bounds
         
-        J <- 2
         
-        D <- matrix(0, ncol = J, nrow = 2^J)
-        D[seq(1, length(D), by = 2^J + 2)] <- 1
-        D[seq(2, length(D), by = 2^J + 2)] <- -1
+        D <- matrix(0, ncol = N, nrow = 2^N)
+        D[seq(1, length(D), by = 2^N + 2)] <- 1
+        D[seq(2, length(D), by = 2^N + 2)] <- -1
         
         bound <- apply(D, 1, 
                        FUN = function(x){
@@ -201,8 +183,8 @@ grid.bound <- function(){
                                }
                        )
         
-        cbind(bound[seq(1, length(bound), by = 2^J + 1)], 
-              bound[seq(J + 1, length(bound), by = 2^J + 1)])
+        cbind(bound[seq(1, length(bound), by = 2^N + 1)], 
+              bound[seq(N + 1, length(bound), by = 2^N + 1)])
         
 }
 
