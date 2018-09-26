@@ -55,17 +55,25 @@ data$x1.itv <- floor(data$x1/0.5)
 data$x2.itv <- floor(data$x2/0.5)
 
 cond.prob.df <- aggregate(eq ~ x1.itv + x2.itv, data = data,
-FUN = function(x){
-    rowSums(matrix(rep(x, each = 4), nrow = 4) == c(1, 2, 3, 4))/length(x)})
+                          FUN = function(x){
+                                  rowSums(matrix(rep(x, each = 4), nrow = 4) == 
+                                                  c(1, 2, 3, 4))/
+                                          length(x)})
 
 colnames(cond.prob.df)[colnames(cond.prob.df) == "eq"] <- "cond.prob"
 
 data <- merge(data, cond.prob.df, by.x = c("x1.itv", "x2.itv"))
 
-#data$cond.prob <- data$cond.prob[cbind(1 : nrow(data), data$eq)]
+firm1 <- data[, c("mktid", "x1", "cost1", "eq", "y1", "cond.prob","x1.itv")]
+firm2 <- data[, c("mktid", "x2", "cost2", "eq", "y2", "cond.prob","x2.itv")]
+firm2$cond.prob <- firm2$cond.prob[, c(1, 3, 2, 4)]
+colnames(firm1) <- c("mktid", "x", "cost", "eq", "y", "cond.prob","x.itv")
+colnames(firm2) <- c("mktid", "x", "cost", "eq", "y", "cond.prob","x.itv")
+firm1$firmid <- 1
+firm2$firmid <- 2
 
+data <- rbind(firm1, firm2)
 data <- data[order(data$mktid), ]
-
 
 ineq.fn <- function(params){
         
