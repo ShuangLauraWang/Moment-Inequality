@@ -54,6 +54,7 @@ P00 <- sum(data$eq == 4)/M
 data$x1.itv <- floor(data$x1/0.5)
 data$x2.itv <- floor(data$x2/0.5)
 
+
 cond.prob.df <- aggregate(eq ~ x1.itv + x2.itv, data = data,
                           FUN = function(x){
                                   rowSums(matrix(rep(x, each = 4), nrow = 4) == 
@@ -80,65 +81,7 @@ data <- data[order(data$mktid), ]
 temp <- matrix(data$xi, nrow = 2) 
 data$xj <- c(temp[c(2, 1), ])
 
-ineq.fn <- function(params){
-        
-        alpha <- params[1]
-        beta <- params[2]
-        
-        ineq <- matrix(0, nrow(data), 6)
-        
-        ineq[, 1] <- (alpha * data$xi - beta) * data$cond.prob[, 1] - 
-                (alpha * data$xj - beta) *  (alpha * data$xi - beta)^2/2
-        
-        ineq[, 2] <- alpha * data$xi * data$cond.prob[, 2] - 
-                (1 - (alpha * data$xj - beta)) *  (alpha * data$xi - beta) ^2/2 - 
-                (1 - alpha * data$xj) * (2 * alpha * data$xi - beta) * beta/2
-        
-        ineq[, 3] <- -(alpha * data$xi - beta) * data$cond.prob[, 3] + 
-                alpha * data$xj * (1 - (alpha * data$xi)^2)/2 + 
-                (alpha * data$xj - beta) * (2 * alpha * data$xi - beta) * beta/2
 
-        ineq[, 4] <- -alpha * data$xi * data$cond.prob[, 4] + 
-                (1 - alpha * data$xj) * (1 - (alpha * data$xi)^2)/2
-
-        
-        ineq[, 5] <- (alpha * data$xi - beta) * data$cond.prob[, 1] +
-                alpha * data$xi * data$cond.prob[, 2] + 
-                alpha * data$xj * (1 - (alpha * data$xi)^2)/2 + 
-                (alpha * data$xj - beta) *  (2 * alpha * data$xi - beta) * beta/2 + 
-                (1 + alpha * data$xi)/2 * data$cond.prob[, 4] -
-                1/2
-
-        ineq[, 6] <- -(alpha * data$xi - beta)/2 * data$cond.prob[, 1] - 
-                (1 - (alpha * data$xj - beta)) *  (alpha * data$xi - beta)^2/2 - 
-                (1 - alpha * data$xj) * (2 * alpha * data$xi - beta) * beta/2 -
-                (alpha * data$xi - beta) * data$cond.prob[, 3] -
-                alpha * data$xi * data$cond.prob[, 4] + 
-                1/2
-        
-        ineq/2
-        
-}
-
-obj <- function(params){
-
-    data$ineq <- ineq.fn(params)
-    
-    ineq.mean <- aggregate(cbind(mean = ineq) ~ bin, 
-                           data = data, 
-                           FUN = mean)
-     
-    ineq.sd <- aggregate(cbind(sd = ineq) ~ bin, 
-                           data = data, 
-                           FUN = sd)
- 
-    
-    sum(pmin(c(as.matrix(ineq.mean[, -(1 : 2)]/ineq.sd[, -(1 : 2)])), 0)^2)
-    
-            
-}
-
-optim(par = c(1, 0), fn = obj)
 
 
 
@@ -249,7 +192,7 @@ type = "p",
 xlim = c(0, 1),
 ylim = c(0, 1)))
 
-
-
+test <- data.frame(cat = rep(1 : 4 , each = 3), value = rnorm(12))
+test %>% group_by(cat) %>% 
 
 
