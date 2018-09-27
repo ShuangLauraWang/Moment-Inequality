@@ -9,6 +9,8 @@ cat("\014") #clear the console
 
 
 library(alabama)
+library(expm)
+
 # Data Generating Process -------------------------------------------------
 
 N <- 2 #no. of firms
@@ -81,7 +83,68 @@ data <- data[order(data$mktid), ]
 temp <- matrix(data$xi, nrow = 2) 
 data$xj <- c(temp[c(2, 1), ])
 
+ineq.fn <- function(params){
+        
+        alpha <- params[1]
+        beta <- params[2]
+        
+        ineq <- matrix(0, nrow(data), 6)
+        
+        ineq[, 1] <- (alpha * data$xi - beta) * data$cond.prob[, 1] - 
+                (alpha * data$xj - beta) *  (alpha * data$xi - beta)^2/2
+        
+        ineq[, 2] <- alpha * data$xi * data$cond.prob[, 2] - 
+                (1 - (alpha * data$xj - beta)) *  (alpha * data$xi - beta) ^2/2 - 
+                (1 - alpha * data$xj) * (2 * alpha * data$xi - beta) * beta/2
+        
+        ineq[, 3] <- -(alpha * data$xi - beta) * data$cond.prob[, 3] + 
+                alpha * data$xj * (1 - (alpha * data$xi)^2)/2 + 
+                (alpha * data$xj - beta) * (2 * alpha * data$xi - beta) * beta/2
 
+        ineq[, 4] <- -alpha * data$xi * data$cond.prob[, 4] + 
+                (1 - alpha * data$xj) * (1 - (alpha * data$xi)^2)/2
+
+        
+        ineq[, 5] <- (alpha * data$xi - beta) * data$cond.prob[, 1] +
+                alpha * data$xi * data$cond.prob[, 2] + 
+                alpha * data$xj * (1 - (alpha * data$xi)^2)/2 + 
+                (alpha * data$xj - beta) *  (2 * alpha * data$xi - beta) * beta/2 + 
+                (1 + alpha * data$xi)/2 * data$cond.prob[, 4] -
+                1/2
+
+        ineq[, 6] <- -(alpha * data$xi - beta)/2 * data$cond.prob[, 1] - 
+                (1 - (alpha * data$xj - beta)) *  (alpha * data$xi - beta)^2/2 - 
+                (1 - alpha * data$xj) * (2 * alpha * data$xi - beta) * beta/2 -
+                (alpha * data$xi - beta) * data$cond.prob[, 3] -
+                alpha * data$xi * data$cond.prob[, 4] + 
+                1/2
+        
+        ineq[, rep(1 : ncol(ineq), each = max(data$bin))] * 
+                idc[, rep(1 : ncol(idc), times = 6)]
+        
+
+}
+
+obj <- function(params){
+
+    ineq <- ineq.fn(params)
+
+    ineq.mean <- colMeans(ineq)
+     
+    ineq.sd <- apply(ineq, 2, sd)
+    
+    sum(pmin(ineq.mean/ineq.sd, 0)^2)
+            
+}
+
+idc <- numeric(0)
+
+for (i in 1 : max(data$bin)){
+        idc <- cbind(idc, data$bin == i)
+}
+
+
+optim(par = c(1, 0), fn = obj)
 
 
 
@@ -91,21 +154,12 @@ data$xj <- c(temp[c(2, 1), ])
 
 hin <- function(params){
         
-        data$ineq <- ineq.fn(params)
+        ineq <- ineq.fn(params)
         
-        ineq.mean <- aggregate(cbind(mean = ineq) ~ bin, 
-                               data = data, 
-                               FUN = mean,
-                               simplify = T)
+        ineq.mean <- colMeans(ineq)
         
-        ineq.weight <- aggregate(cbind(mean = ineq) ~ bin, 
-                                 data = data, 
-                                 FUN = length)
-        
-        h <- c(as.matrix(ineq.mean[, -(1 : 2)] + 
-                                 log(ineq.weight[, -(1 : 2)])))
-        #h <- c(h, params[1], params[2], 1 - params[1], 1 - params[2])
-        
+        h <- ineq.mean + log(N * M)
+
 }
 
 grid.bound <- function(){
@@ -139,9 +193,55 @@ grid.bound()
 ## Step 3: evaluate the MMM test statistics at theta:
 
 P <- 100
-alpha_p <- 1 : P/P
-beta_p <- 1 : P/P
-theta_p <- apply(cbind(rep(alpha_p, each = P), rep(beta_p, times = P)), 1, FUN = obj)
+Alpha <- 1 : P/P
+Beta <- 1 : P/P
+Theta <- cbind(rep(Alpha, each = P), rep(Beta, times = P))
+Q <- apply(Theta, 1, FUN = obj)
+
+## Step 4: compute the correlation matrix of the moments evaluated at theta_p
+
+K <- 6 * max(data$bin)
+R <- 1000
+
+CS <- numeric(0)
+
+for (i in 1 : nrow(Theta)){
+        
+        ineq <- ineq.fn(Theta[i, ])
+        ineq.mean <- colMeans(ineq)
+        ineq.sd <- apply(ineq, 2, sd)
+        omega <- cor(ineq)
+
+        rnd.xi <- matrix(rnorm(R * K), nrow = K)
+        
+        omega.sqrt <- chol(omega, pivot = T)
+        
+        temp1 <- apply(omega.sqrt %*% rnd.xi, 2, 
+                       FUN = function(x){pmin(x, 0)^2})
+        
+        temp2 <- sqrt(N * M) * ineq.mean/ineq.sd <= sqrt(log(N * M))
+
+        Qr <- temp2 %*% temp1
+        cv <- quantile(Qr, probs = 0.95)
+        
+        if (Q[i] < cv){
+                CS <- rbind(CS, Q[i])
+        }
+        
+}
+
+
+ineq <- ineq.fn(params)
+
+sigma_p <- cov(ineq)
+Omega <- sqrt(diag(diag(sigma))) %*% sigma %*% sqrt(diag(diag(sigma)))
+
+
+## Step 5: simulate the asymptotic distribution of Q_p
+## 
+
+
+
 
 
 ## 
