@@ -195,7 +195,7 @@ grid.bound()
 P <- 100
 Alpha <- 1 : P/P
 Beta <- 1 : P/P
-Theta <- cbind(rep(Alpha, each = P), rep(Beta, times = P))
+Theta <- setNames(expand.grid(Alpha, Beta), c("alpha", "beta"))
 Q <- apply(Theta, 1, FUN = obj)
 
 ## Step 4: compute the correlation matrix of the moments evaluated at theta_p
@@ -245,54 +245,13 @@ Omega <- sqrt(diag(diag(sigma))) %*% sigma %*% sqrt(diag(diag(sigma)))
 
 
 ## 
-#graph
-x <- 1 : 100/100
-y <- 1 : 100/100
-z <- apply(cbind(rep(x, each = 100), rep(y, times = 100)), 1, FUN = obj)
 
-df <- data.frame(x = rep(x, each = 100), y = rep(y, times = 100), z = z)
+# 2-D Graph ---------------------------------------------------------------
+# 
 
+ineq <- ineq.fn
 
-zlim <- range(z)
-zlen <- round((zlim[2] - zlim[1]) * 100) + 1
-
-colorlut <- terrain.colors(zlen)
-
-col <- colorlut[(round(z * 100 - zlim[1]) + 1 )]
-
-surface3d(x, y, z, color = col)
-grid3d(c("x", "y+", "z"), n =20)
-
-# graph 2-D
-a <- seq(0, 1, by = 0.01)
-b <- seq(0, 1, by = 0.01)
-df <- setNames(expand.grid(a, b), c("a", "b"))
-df <- transform(df,
-ueq = ((x - y) * P11 - (x - y)^3/2 >= 0)
-& (x * P10 - (x - y)^2 * (1 - (x - y))/2 - (1 - x) * (2*x - y) * y/2 >= 0)
-& ((x - y) * P01 - x * (1 - x^2)/2 - (x - y) * (2 * x - y) * y/2 <= 0)
-& (x * P00 - (1 - x^2) * (1 - x)/2 <= 0)
-& ((x - y) * P11 +
-x * (1 - x^2)/2 + (x - y) * (2 * x - y) * y/2 +
-x * P10 +
-(1 + x)/2 * P00 >= 0.5)
-& ((x - y) * P01 +
-(x - y)/2 * P11 +
-x * P00 +
-(x - y)^2 * (1 - (x - y))/2 + (1 - x) * (2*x - y) * y/2 <= 0.5)
-& (x - y >= 0)
-)
-summary(df)
-df$color <- ifelse(df$ueq == TRUE, "lightblue", "orange")
-with(df[df$ueq == TRUE, ],
-plot(x = x,
-y = y,
-col=color,
-type = "p",
-xlim = c(0, 1),
-ylim = c(0, 1)))
-
-test <- data.frame(cat = rep(1 : 4 , each = 3), value = rnorm(12))
-test %>% group_by(cat) %>% 
-
-
+graph.df$is <- apply(as.matrix(Theta), 1, 
+                     FUN = function(x){
+                             
+                     })
