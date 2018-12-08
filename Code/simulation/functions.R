@@ -16,7 +16,7 @@ UBoundDF <- function(eq, params, lb.org = -Inf, ub.org = Inf){
         #         
         
         N <- length(eq)        
-
+        
         alpha <- params[grep("alpha", names(params))]
         beta.v <- params[grep("beta?", names(params))] # vector of competition effects
         
@@ -24,7 +24,7 @@ UBoundDF <- function(eq, params, lb.org = -Inf, ub.org = Inf){
         bound$lb <- matrix(lb.org, ncol = N)
         bound$ub <- matrix(ub.org, ncol = N)
         
-
+        
         
         for(i in 1 : N){ 
                 
@@ -53,8 +53,9 @@ LBoundDF <- function(eq, params, lb.org = -Inf, ub.org = Inf){
         #         containing lower bounds and upper bounds, respectively
         #         
         
-        N <- length(eq)        
-
+        N <- length(eq) 
+        NP <- factorial(N)
+        
         gnr.bound <- matrix(rep(c(0, 1), each = NP), ncol = 2)
         
         alpha <- params[grep("alpha", names(params))]
@@ -87,15 +88,19 @@ LBoundDF <- function(eq, params, lb.org = -Inf, ub.org = Inf){
                         id.large.before <- pos.id.large[pos.id.large < j]
                         
                         if (entry[i, j] == 1){
+                                
                                 bound$ub[i, id] <- 
                                         alpha - sum(beta.v[c(entrant.before, all.after)])
                                 
                                 if (length(id.large.before) > 0){
                                         
                                         # latest firm with a larger id
-                                        pos.before <- max(id.large.before) 
-                                        bound$lb[i, id] <- 
-                                                min(bound$ub[bound$order[, pos.before] == id])
+                                        pos.before <- max(id.large.before)
+                                       
+                                        order.before <- bound$order[1 : (i - 1), pos.before]
+                                        ub.before <- bound$ub[1 : (i - 1), id]
+                                        temp <- ub.before[order.before == id]
+                                        bound$lb[i, id] <- temp[length(temp)]
                                 }
                                 
                                 
@@ -107,8 +112,10 @@ LBoundDF <- function(eq, params, lb.org = -Inf, ub.org = Inf){
                                         
                                         # latest firm with a larger id
                                         pos.before <- max(id.large.before) 
-                                        bound$ub[i, id] <- 
-                                                max(bound$lb[bound$order[, pos.before] == id])
+                                        order.before <- bound$order[1 : (i - 1), pos.before]
+                                        lb.before <- bound$lb[1 : (i - 1), id]
+                                        temp <- lb.before[order.before == id]
+                                        bound$ub[i, id] <- temp[length(temp)]
                                 }
                         }
                 }
@@ -116,6 +123,8 @@ LBoundDF <- function(eq, params, lb.org = -Inf, ub.org = Inf){
         
         bound
 }
+
+
 
 
 ProbBounds <- function(params){
@@ -128,45 +137,43 @@ ProbBounds <- function(params){
         # Output: dataframe with possible market structures, & their corresponding 
         # lower bounds, observed probilities, upper bounds
         
-
         
-        prob.table <- data.frame(market.struct = matrix(numeric(0), ncol = N), 
+        
+        prob.table <- data.frame(entry = matrix(numeric(0), ncol = N), 
                                  lb.prdt = numeric(0), 
                                  prob.obs = numeric(0), 
                                  up.prdt = numeric(0))
         
-        for(i in 0 : 1){
-                for(j in 0 : 1){
-                        for(k in 0 : 1){
-                                
-                                if(eq == T){
-                                        
-                                        prob.obs <- get(paste0("P", i, j, k))
-                                        
-                                        UB <- UBoundDF(eq = c(i, j, k), 
-                                                       params,
-                                                       lb.org = 0, 
-                                                       ub.org = 1)
-                                        
-                                        prob.ub <- apply(UB$ub - UB$lb, 1, prod)
-                                        
-                                        LB <- LBoundDF(eq = c(i, j, k), 
-                                                       params, 
-                                                       lb.org = 0, 
-                                                       ub.org = 1)
-                                        
-                                        prob.lb <- sum(apply(LB$ub - LB$lb, 1, prod)) 
-                                        
-                                        prob.table <- rbind(prob.table, 
-                                                            data.frame(market.struct = matrix(c(i,j,k), nrow = 1), 
-                                                                       lb.prdt = prob.lb,
-                                                                       prob.obs = prob.obs,
-                                                                       ub.prdt = prob.ub))
-                                        
-                                }
-                        }
-                }
+        
+        for(i in 1 : 2^N){
+                prob.obs <- get(paste0("P", paste0(entry.possible[, i], collapse = "")))
+                
+                UB <- UBoundDF(eq = entry.possible[, i], 
+                               params,
+                               lb.org = 0, 
+                               ub.org = 1)
+                
+                prob.ub <- apply(UB$ub - UB$lb, 1, prod)
+                
+                LB <- LBoundDF(eq = entry.possible[, i], 
+                               params, 
+                               lb.org = 0, 
+                               ub.org = 1)
+                
+                prob.lb <- sum(apply(LB$ub - LB$lb, 1, prod)) 
+                
+                prob.table <- rbind(prob.table, 
+                                    data.frame(entry = 
+                                                       matrix(entry.possible[, i], nrow = 1), 
+                                               lb.prdt = prob.lb,
+                                               prob.obs = prob.obs,
+                                               ub.prdt = prob.ub))
         }
         
-        prob.table
+        
+        
+        
+        prob.table               
 }
+
+
