@@ -51,6 +51,9 @@ eq <- apply(entry.possible, 2, FUN = function(x){
 data$eq <- sapply(apply(eq == 1, 1, which), function(x){x[sample(length(x), size = 1)]})
 
 
+# Counstruct UB and LB for the observed probs ----------------------------------
+
+
 invisible(apply(entry.possible, 2, FUN = function(x){
         assign(paste0("P", paste(1 - x, collapse = "")),
                sum(data$eq == c(x %*% 2^((N - 1) : 0) + 1))/M, envir = .GlobalEnv)
